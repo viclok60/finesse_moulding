@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "creation": "2024-06-26 11:11:34.191012",
  "default_view": "List",
@@ -96,10 +97,11 @@
    "reqd": 1
   }
  ],
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2024-06-26 14:01:11.200463",
+ "modified": "2024-06-26 14:34:54.460432",
  "modified_by": "Administrator",
  "module": "Office",
  "name": "Car Usage",
