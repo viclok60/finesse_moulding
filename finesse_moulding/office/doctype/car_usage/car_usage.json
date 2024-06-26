@@ -78,6 +78,7 @@
    "reqd": 1
   },
   {
+   "default": "0",
    "fieldname": "mileage",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -97,11 +98,10 @@
    "reqd": 1
   }
  ],
- "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2024-06-26 14:34:54.460432",
+ "modified": "2024-06-26 15:42:19.698549",
  "modified_by": "Administrator",
  "module": "Office",
  "name": "Car Usage",
