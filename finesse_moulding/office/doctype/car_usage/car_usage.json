@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
  "creation": "2024-06-26 11:11:34.191012",
  "default_view": "List",
@@ -56,6 +55,7 @@
    "fieldname": "ip_address",
    "fieldtype": "Data",
    "label": "User's IP Address",
+   "permlevel": 2,
    "read_only": 1
   },
   {
@@ -100,7 +100,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2024-06-26 16:08:30.332002",
+ "modified": "2024-06-26 17:13:12.688219",
  "modified_by": "Administrator",
  "module": "Office",
  "name": "Car Usage",
@@ -116,6 +116,26 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Receptionist",
+   "select": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Office",
+   "select": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 2,
+   "role": "Office",
    "write": 1
   }
  ],
