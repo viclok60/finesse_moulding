@@ -168,6 +168,7 @@ frappe.listview_settings['Car Usage'] = {
     refresh: function(listview) {
         listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
 	$("use.like-icon").hide();
+	hide_name_column: true,
     }
 };
 // ---------------------------------------------------------------------------------
