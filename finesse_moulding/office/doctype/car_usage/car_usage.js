@@ -134,7 +134,7 @@ frappe.ui.form.on('Car Usage', {
 	refresh(frm) {
 		document.getElementsByClassName("timeline-items timeline-actions")[0].style.display = "none";
 	}
-})
+});
 // ---------------------------------------------------------------------------------
 
 // ----------------------------- Validate time -----------------------------------
