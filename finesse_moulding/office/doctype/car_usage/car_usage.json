@@ -56,7 +56,6 @@
    "fieldname": "ip_address",
    "fieldtype": "Data",
    "label": "User's IP Address",
-   "permlevel": 2,
    "read_only": 1
   },
   {
@@ -101,7 +100,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2024-06-26 15:42:19.698549",
+ "modified": "2024-06-26 16:08:30.332002",
  "modified_by": "Administrator",
  "module": "Office",
  "name": "Car Usage",
