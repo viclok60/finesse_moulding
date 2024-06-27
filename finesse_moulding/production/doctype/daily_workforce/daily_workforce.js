@@ -482,6 +482,145 @@ frappe.ui.form.on('Daily Workforce', {
 });
 // -------------------------------------------------------------------------
 
+// -------------------- Prevent duplicate form ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+    validate: function (frm) {
+        // Get the selected date and branch from the form
+        var selectedDate = frm.doc.date;
+        var selectedBranch = frm.doc.branch;
+
+        // Check if another Daily Workforce entry exists with the same date and branch
+        frappe.call({
+            method: 'frappe.client.get_list',
+            args: {
+                doctype: 'Daily Workforce',
+                fields: ['name'],
+                filters: {
+                    date: selectedDate,
+                    branch: selectedBranch,
+                    name: ['!=', frm.doc.name] // Exclude the current document if being updated
+                }
+            },
+            callback: function (r) {
+                if (r.message && r.message.length > 0) {
+                    // Show an error message and prevent saving the form
+                    frappe.msgprint({
+                        title: __('Duplicate Entry'),
+                        indicator: 'red',
+                        message: __('Another Daily Workforce entry with the same date and branch already exists.'),
+                        raise: true
+                    });
+                    frappe.validated = false;
+                }
+            }
+        });
+    }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Validate all columns when off ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+    validate: function (frm) {
+        var error_occurred = false;
+        var error_rows = [];
+
+        frm.doc.branch_employee.forEach(function (row) {
+            if (row.employee_off === 1) {
+                if (row.time_in || row.time_out || row.transfer_department || row.transfer_start || row.transfer_end) {
+                    error_occurred = true;
+                    error_rows.push(row.idx);
+                }
+            }
+        });
+
+        if (error_occurred) {
+            frappe.msgprint({
+                title: __('Input Error'),
+                message: __('If Off is tick, all other fields in rows {0} must be empty.', [error_rows.join(', ')]),
+                indicator: 'red'
+            });
+            frappe.validated = false;
+        }
+    }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Validate row data, prevent missing data ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+  validate: function(frm) {
+    // Get the child table data
+    var branchEmployees = frm.doc.branch_employee || [];
+
+    var errorRows = []; // Array to store row numbers with errors
+
+    // Loop through each row in the child table
+    for (var i = 0; i < branchEmployees.length; i++) {
+      var child = branchEmployees[i];
+
+      // Check if any of the fields have data in the row
+      if (child.transfer_department || child.transfer_start || child.transfer_end) {
+        // Check if all the fields are filled in the row
+        if (
+          (!child.transfer_department && child.transfer_department !== 0) ||
+          !child.transfer_start ||
+          !child.transfer_end
+        ) {
+          errorRows.push(i + 1); // Store the row number with error
+        }
+      }
+    }
+
+    // Check if there are any errors
+    if (errorRows.length > 0) {
+      frappe.msgprint({
+        title: __('Data Entry Error'),
+        indicator: 'red',
+        message: __('Transfer Dept., Transfer Start and Transfer End must be filled at rows: ') + errorRows.join(', '),
+      });
+      frappe.validated = false;
+      return;
+    }
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Validate time data, prevent missing data ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+  validate: function(frm) {
+    var errorRows = []; // Array to store row numbers with errors
+
+    // Loop through each row in the child table
+    frm.doc.branch_employee.forEach(function(child, index) {
+      // Check if any of the fields have data in the row
+      if (child.time_in || child.time_out) {
+        // Check if both "time_in" and "time_out" are filled in the row
+        if (!child.time_in || !child.time_out) {
+          errorRows.push(index + 1); // Store the row number with error
+        }
+      }
+    });
+
+    // If there are rows with errors, display the error message with the row numbers
+    if (errorRows.length > 0) {
+      frappe.msgprint({
+        title: __('Data Entry Error'),
+        indicator: 'red',
+        message: __('Time In and Time Out must be filled at rows ') + errorRows.join(', '),
+      });
+      frappe.validated = false;
+    }
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Fetch Branch Employees 1 ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+	// refresh: function(frm) {
+
+	// }
+});
+// -------------------------------------------------------------------------
+
 // -------------------- Fetch Branch Employees 1 ----------------------------
 frappe.ui.form.on('Daily Workforce', {
 	// refresh: function(frm) {
