@@ -127,13 +127,13 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
- scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"finesse_moulding.tasks.all"
 # 	],
  	"daily": [
- 		"finesse_moulding.tasks.daily_workforce"
- 	],
+		"finesse_moulding.tasks.daily_workforce"
+	],
 # 	"hourly": [
 # 		"finesse_moulding.tasks.hourly"
 # 	],
@@ -143,7 +143,7 @@ app_license = "MIT"
 # 	"monthly": [
 # 		"finesse_moulding.tasks.monthly"
 # 	],
- }
+  }
 
 # Testing
 # -------
