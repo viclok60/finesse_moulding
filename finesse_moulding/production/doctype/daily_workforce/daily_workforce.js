@@ -613,26 +613,274 @@ frappe.ui.form.on('Daily Workforce', {
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Hide sidebar ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+	refresh: function(me) {
+    		me.page.sidebar.remove(); // this removes the sidebar
+    		me.page.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10"); // this removes class "col-md-10" from content block, which sets width to 83%
+    	} 
+}
+);
+// -------------------------------------------------------------------------
 
-	// }
+// -------------------- Remove new email button ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+	refresh(frm) {
+		document.getElementsByClassName("timeline-items timeline-actions")[0].style.display = "none";
+	}
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Remove comment button ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
-
-	// }
+    refresh: function(frm) {
+        frm.page.wrapper.find(".comment-box").css({'display':'none'});
+    }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Tick all off ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+  refresh: function(frm) {
+    frm.add_custom_button('Tick All Off', function() {
+      frm.doc.branch_employee.forEach(function(row) {
+        // Set the value of the checkbox field to 1 (checked)
+        frappe.model.set_value(row.doctype, row.name, 'employee_off', 1);
+      });
 
-	// }
+      // Refresh the child table to reflect the changes
+      frm.refresh_field('branch_employee');
+    }, __("Set Off"))
+
+    frm.add_custom_button(__('Set Off for Selected Rows'), function() {
+      // Set the 'time_in' field value to 1 for selected rows
+      var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+      selectedRows.forEach(function(row) {
+        frappe.model.set_value(row.doctype, row.name, 'employee_off', 1);
+      });
+
+      // Refresh all selected rows at once
+      frm.fields_dict.branch_employee.grid.refresh_selected(); 
+    }, __("Set Off"))
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- All time in 08:00 ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+  refresh: function(frm) {
+    frm.add_custom_button('All Time In 08:00', function() {
+      frm.doc.branch_employee.forEach(function(row) {
+        if (row.employee_off === 0) {
+          // Set the value of the time field to '08:00' for rows with 'employee_off' = 0
+          frappe.model.set_value(row.doctype, row.name, 'time_in', '08:00');
+        }
+      });
+
+      // Refresh the child table to reflect the changes
+      frm.refresh_field('branch_employee');
+    }, __("Set Time In"));
+
+    frm.add_custom_button(__('Set Time In for Selected Rows'), function() {
+      frappe.prompt([
+        {
+          label: __('Select Time'),
+          fieldname: 'time_in',
+          fieldtype: 'Select',
+          options: [
+            '07:00', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+            '11:00', '11:30', '13:30', '14:00', '14:30', '15:00', '15:30',
+            '16:00', '16:30', '17:00', '17:30', '18:00'
+          ],
+          reqd: 1
+        }
+      ], function(values) {
+        // Get the user-selected time value
+        var selectedTime = values.time_in;
+
+        // Iterate through selected rows in the child table
+        var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+        selectedRows.forEach(function(row) {
+          frappe.model.set_value(row.doctype, row.name, 'time_in', selectedTime);
+        });
+
+        // Refresh all selected rows at once
+        frm.fields_dict.branch_employee.grid.refresh_selected(); 
+      }, __('Set Time In for Selected Rows'), __('Set Time'));
+    }, __("Set Time In"));
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- All time out 18:00 ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+  refresh: function(frm) {
+    frm.add_custom_button('All Time Out 18:00', function() {
+      frm.doc.branch_employee.forEach(function(row) {
+        if (row.employee_off === 0) {
+          // Set the value of the time field to 18:00' for rows with 'employee_off' = 0
+          frappe.model.set_value(row.doctype, row.name, 'time_out', '18:00');
+        }
+      });
+
+      // Refresh the child table to reflect the changes
+      frm.refresh_field('branch_employee');
+    }, __("Set Time Out"));
+
+    frm.add_custom_button(__('Set Time Out for Selected Rows'), function() {
+      frappe.prompt([
+        {
+          label: __('Select Time'),
+          fieldname: 'time_out',
+          fieldtype: 'Select',
+          options: [
+            '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00',
+            '12:30', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00',
+            '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
+            '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'
+          ],
+          reqd: 1
+        }
+      ], function(values) {
+        // Get the user-selected time value
+        var selectedTime = values.time_out;
+
+        // Iterate through selected rows in the child table
+        var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+        selectedRows.forEach(function(row) {
+          frappe.model.set_value(row.doctype, row.name, 'time_out', selectedTime);
+        });
+
+        // Refresh all selected rows at once
+        frm.fields_dict.branch_employee.grid.refresh_selected(); 
+      }, __('Set Time Out for Selected Rows'), __('Set Time'));
+    }, __("Set Time Out"));
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Set transfer dept for rows ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+  refresh: function(frm) {
+     frm.add_custom_button(__('Set Transfer Dept for Selected Rows'), function() {
+      frappe.prompt([
+        {
+          label: __('Select Department'),
+          fieldname: 'transfer_department',
+          fieldtype: 'Select',
+          options: [
+            'CUT', 'EMB', 'FINAL', 'FJ', 'FL', 'FOIL', 'GESSO', 'MD', 'MTN',
+            'OIL', 'PACK', 'PALLET', 'RIP', 'SD11', 'SD12', 'SM', 'SP11', 'SP12',
+            'T_MAKING', 'TFL', 'WHS12', 'WHS41', 'VEN', 'GL'
+          ],
+          reqd: 1
+        }
+      ], function(values) {
+        // Get the user-selected time value
+        var selectedDept = values.transfer_department;
+
+        // Iterate through selected rows in the child table
+        var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+        selectedRows.forEach(function(row) {
+          frappe.model.set_value(row.doctype, row.name, 'transfer_department', selectedDept);
+        });
+
+        // Refresh all selected rows at once
+        frm.fields_dict.branch_employee.grid.refresh_selected(); 
+      }, __('Set Transfer Dept for Selected Rows'), __('Set Department'));
+    }, __("Set Transfer Dept"));
+    
+
+    frm.add_custom_button(__('Set Transfer Start for Selected Rows'), function() {
+      frappe.prompt([
+        {
+          label: __('Select Time'),
+          fieldname: 'transfer_start',
+          fieldtype: 'Select',
+          options: [
+            '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00',
+            '11:30', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00',
+            '16:30', '17:00', '17:30', '18:30'
+          ],
+          reqd: 1
+        }
+      ], function(values) {
+        // Get the user-selected time value
+        var selectedTime = values.transfer_start;
+
+        // Iterate through selected rows in the child table
+        var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+        selectedRows.forEach(function(row) {
+          frappe.model.set_value(row.doctype, row.name, 'transfer_start', selectedTime);
+        });
+
+        // Refresh all selected rows at once
+        frm.fields_dict.branch_employee.grid.refresh_selected(); 
+      }, __('Set Transfer Start for Selected Rows'), __('Set Time'));
+    }, __("Set Transfer Dept"));
+    
+    
+     frm.add_custom_button(__('Set Transfer End for Selected Rows'), function() {
+      frappe.prompt([
+        {
+          label: __('Select Time'),
+          fieldname: 'transfer_end',
+          fieldtype: 'Select',
+          options: [
+            '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:30',
+            '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00',
+            '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+            '21:00', '21:30', '22:00', '22:30'
+          ],
+          reqd: 1
+        }
+      ], function(values) {
+        // Get the user-selected time value
+        var selectedTime = values.transfer_end;
+
+        // Iterate through selected rows in the child table
+        var selectedRows = frm.fields_dict.branch_employee.grid.get_selected_children();
+        selectedRows.forEach(function(row) {
+          frappe.model.set_value(row.doctype, row.name, 'transfer_end', selectedTime);
+        });
+
+        // Refresh all selected rows at once
+        frm.fields_dict.branch_employee.grid.refresh_selected(); 
+      }, __('Set Transfer End for Selected Rows'), __('Set Time'));
+    }, __("Set Transfer Dept"));
+  }
+});
+// -------------------------------------------------------------------------
+
+// -------------------- Clear Table ----------------------------
+frappe.ui.form.on('Daily Workforce', {
+    refresh: function(frm) {
+        frm.add_custom_button(__('Clear Table'), function() {
+            frappe.confirm(__('Are you sure you want to clear the table?'), function() {
+                frm.doc.branch_employee.forEach(function(row) {
+                    row.employee_off = 0;
+                    row.time_in = '';
+                    row.time_out = '';
+                    row.transfer_department = '';
+                    row.transfer_start = '';
+                    row.transfer_end = '';
+                });
+
+                // Clear branch_employee1 table
+                frm.doc.branch_employee1.forEach(function(row) {
+                    row.transfer_department2 = '';
+                    row.transfer_start2 = '';
+                    row.transfer_end2 = '';
+                    row.transfer_department3 = '';
+                    row.transfer_start3 = '';
+                    row.transfer_end3 = '';
+                });
+
+                // Refresh both tables to update the view
+                frm.refresh_field('branch_employee');
+                frm.refresh_field('branch_employee1');
+            });
+        }).addClass('btn-danger'); // Add a class for red background color
+    }
 });
 // -------------------------------------------------------------------------
