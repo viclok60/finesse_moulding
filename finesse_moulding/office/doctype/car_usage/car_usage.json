@@ -1,0 +1,127 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-06-27 11:03:43.740906",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee_number",
+  "employee_name",
+  "destination",
+  "car_model",
+  "ip_address",
+  "column_break_la5dm",
+  "time_out",
+  "time_in",
+  "mileage",
+  "distance",
+  "purpose"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Emp. ID",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee_number.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "destination",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Destination",
+   "reqd": 1
+  },
+  {
+   "fieldname": "car_model",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Car Model",
+   "options": "\nFord Ranger Silver\nFord Ranger Blue\nToyota Altis\nToyota Hiace Window Van 2.5 (D)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "User's IP Address",
+   "permlevel": 2,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_la5dm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_out",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Time Out",
+   "reqd": 1
+  },
+  {
+   "fieldname": "time_in",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Time In",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "mileage",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Mileage"
+  },
+  {
+   "fieldname": "distance",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Distance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Small Text",
+   "label": "Purpose",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
+ "links": [],
+ "modified": "2024-06-27 11:09:47.919493",
+ "modified_by": "Administrator",
+ "module": "Office",
+ "name": "Car Usage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "employee_name",
+ "track_changes": 1
+}
