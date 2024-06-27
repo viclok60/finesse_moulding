@@ -17,16 +17,18 @@
  ],
  "fields": [
   {
+   "fetch_from": "employee_name.employee_number",
    "fieldname": "employee_number",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Emp. No",
-   "options": "Employee"
+   "read_only": 1
   },
   {
+   "fetch_from": "employee_number.employee_name",
    "fieldname": "employee_name",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Name",
-   "options": "Employee"
+   "read_only": 1
   },
   {
    "fieldname": "transfer_department2",
@@ -68,7 +70,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-27 13:39:32.566291",
+ "modified": "2024-06-27 16:47:23.848409",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "Branch Employee 1",
