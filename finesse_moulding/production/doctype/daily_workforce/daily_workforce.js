@@ -281,49 +281,49 @@ frappe.ui.form.on('Daily Workforce', {
 // -------------------------------------------------------------------------
 
 // -------------------- Remove edit wheel on branch employees 1 ----------------------------
-frappe.ui.form.on('Daily Workforce', {
-    refresh: function (frm, cdt, cdn) {
-        // Define the function to apply the CSS rule
-        function applyCSSRule() {
-            var gridWrapper = frm.fields_dict['branch_employee1'].$wrapper.find('.grid-row>.row .col:last-child, .form-section .grid-row>.section-body .col:last-child, .form-dashboard-section .grid-row>.section-body .col:last-child, .grid-row>.dialog-assignment-row .col:last-child');
-            var gridWrapperEdit = frm.fields_dict['branch_employee1'].$wrapper.find('.btn-open-row');
-            // Add a CSS rule to disable pointer events
-            gridWrapper.css('pointer-events', 'none');
-            gridWrapperEdit.css('pointer-events', 'none');
-        }
+// frappe.ui.form.on('Daily Workforce', {
+//     refresh: function (frm, cdt, cdn) {
+//         // Define the function to apply the CSS rule
+//         function applyCSSRule() {
+//             var gridWrapper = frm.fields_dict['branch_employee1'].$wrapper.find('.grid-row>.row .col:last-child, .form-section .grid-row>.section-body .col:last-child, .form-dashboard-section .grid-row>.section-body .col:last-child, .grid-row>.dialog-assignment-row .col:last-child');
+//             var gridWrapperEdit = frm.fields_dict['branch_employee1'].$wrapper.find('.btn-open-row');
+//             // Add a CSS rule to disable pointer events
+//             gridWrapper.css('pointer-events', 'none');
+//             gridWrapperEdit.css('pointer-events', 'none');
+//         }
 
-        // Call the function when the page loads
-        applyCSSRule();
+//         // Call the function when the page loads
+//         applyCSSRule();
 
-        // Call the function when the table refreshes
-        frm.fields_dict['branch_employee1'].$wrapper.on('change', function () {
-            applyCSSRule();
-        });
-    }
-});
+//         // Call the function when the table refreshes
+//         frm.fields_dict['branch_employee1'].$wrapper.on('change', function () {
+//             applyCSSRule();
+//         });
+//     }
+// });
 // -------------------------------------------------------------------------
 
 // -------------------- Remove edit wheel on branch employees ----------------------------
-frappe.ui.form.on('Daily Workforce', {
-    refresh: function (frm, cdt, cdn) {
-        // Define the function to apply the CSS rule
-        function applyCSSRule() {
-            var gridWrapper = frm.fields_dict['branch_employee'].$wrapper.find('.grid-row>.row .col:last-child, .form-section .grid-row>.section-body .col:last-child, .form-dashboard-section .grid-row>.section-body .col:last-child, .grid-row>.dialog-assignment-row .col:last-child');
-            var gridWrapperEdit = frm.fields_dict['branch_employee'].$wrapper.find('.btn-open-row');
-            // Add a CSS rule to disable pointer events
-            gridWrapper.css('pointer-events', 'none');
-            gridWrapperEdit.css('pointer-events', 'none');
-        }
+// frappe.ui.form.on('Daily Workforce', {
+//     refresh: function (frm, cdt, cdn) {
+//         // Define the function to apply the CSS rule
+//         function applyCSSRule() {
+//             var gridWrapper = frm.fields_dict['branch_employee'].$wrapper.find('.grid-row>.row .col:last-child, .form-section .grid-row>.section-body .col:last-child, .form-dashboard-section .grid-row>.section-body .col:last-child, .grid-row>.dialog-assignment-row .col:last-child');
+//             var gridWrapperEdit = frm.fields_dict['branch_employee'].$wrapper.find('.btn-open-row');
+//             // Add a CSS rule to disable pointer events
+//             gridWrapper.css('pointer-events', 'none');
+//             gridWrapperEdit.css('pointer-events', 'none');
+//         }
 
-        // Call the function when the page loads
-        applyCSSRule();
+//         // Call the function when the page loads
+//         applyCSSRule();
 
-        // Call the function when the table refreshes
-        frm.fields_dict['branch_employee'].$wrapper.on('change', function () {
-            applyCSSRule();
-        });
-    }
-});
+//         // Call the function when the table refreshes
+//         frm.fields_dict['branch_employee'].$wrapper.on('change', function () {
+//             applyCSSRule();
+//         });
+//     }
+// });
 // -------------------------------------------------------------------------
 
 // -------------------- Hide add row on branch employees 1 ----------------------------
