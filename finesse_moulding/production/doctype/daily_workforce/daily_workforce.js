@@ -326,51 +326,159 @@ frappe.ui.form.on('Daily Workforce', {
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Hide add row on branch employees 1 ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
-
-	// }
+    refresh: function(frm) {
+        frm.get_field('branch_employee1').grid.cannot_add_rows = true;
+        
+        // Refresh the form after hiding the "Add Row" button
+        if (!frm._refreshed) {
+            frm._refreshed = true;
+            frm.refresh();
+        }
+    }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Hide add row on branch employees ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
-
-	// }
+    refresh: function(frm) {
+        frm.get_field('branch_employee').grid.cannot_add_rows = true;
+        
+        // Refresh the form after hiding the "Add Row" button
+        if (!frm._refreshed) {
+            frm._refreshed = true;
+            frm.refresh();
+        }
+    }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
-frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+// -------------------- Set off when no touch card ----------------------------
+frappe.ui.form.on("Daily Workforce", {
+  date: function(frm, cdt, cdn) {
+    // Get the selected date from the 'date' field in Daily Workforce
+    const selectedDate = frm.doc.date;
+    
+    // Loop through the 'branch_employee' child table rows
+    frm.doc.branch_employee.forEach(row => {
+      const employee = row.employee_number;
+      let employeeOff = 1; // Default to 1 (employee is off)
 
-	// }
+      frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+          doctype: "Employee Checkin",
+          filters: [
+            ['time', '>=', selectedDate + ' 00:00:00'], // Start of selected date
+            ['time', '<', selectedDate + ' 23:59:59'],   // End of selected date
+            ['employee', '=', employee]
+          ]
+        },
+        callback: function(response) {
+
+          if (response.message && response.message.length > 0) {
+            // If there are check-ins for this employee on the selected date, set employeeOff to 0 (employee is not off)
+            employeeOff = 0;
+          }
+
+          // Set the 'employee_off' field in the 'branch_employee' child table
+          frappe.model.set_value(row.doctype, row.name, 'employee_off', employeeOff);
+
+        }
+      });
+    });
+  }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Auto set pending ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+    after_save: function(frm) {
+        const workflowState = frm.doc.workflow_state;
+        const previousWorkflowState = frm.doc.__last_workflow_state || 'Pending';
 
-	// }
+        if (workflowState === 'Approved' && workflowState !== previousWorkflowState) {
+            // Set the workflow_state to 'Pending' and reload the document
+            frappe.db.set_value('Daily Workforce', frm.doc.name, 'workflow_state', 'Pending')
+                .then(() => {
+                    // Save the current workflow_state as the previous state
+                    frm.doc.__last_workflow_state = workflowState;
+                    frm.save_or_update();
+                });
+        }
+    },
+    onload: function(frm) {
+        // Initialize the __last_workflow_state field when the form is loaded
+        frm.doc.__last_workflow_state = frm.doc.workflow_state;
+    }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Clear rows when off ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+    refresh: function(frm) {
+        frm.fields_dict['branch_employee'].grid.get_field('employee_off').get_query = function(doc, cdt, cdn) {
+            return {
+                filters: [
+                    // Add any additional filters if needed
+                ]
+            };
+        };
+    }
+});
 
-	// }
+frappe.ui.form.on('Branch Employee', {
+    employee_off: function(frm, cdt, cdn) {
+        var child = locals[cdt][cdn];
+        
+        if (child.employee_off === 1) {
+            frappe.model.set_value(cdt, cdn, 'time_in', '');
+            frappe.model.set_value(cdt, cdn, 'time_out', '');
+            frappe.model.set_value(cdt, cdn, 'transfer_department', '');
+            frappe.model.set_value(cdt, cdn, 'transfer_start', '');
+            frappe.model.set_value(cdt, cdn, 'transfer_end', '');
+        }
+    }
+});
+
+frappe.ui.form.on('Daily Workforce', {
+    validate: function(frm) {
+        frm.doc.branch_employee.forEach(function(row) {
+            if (row.employee_off === 1) {
+                frappe.model.set_value(row.doctype, row.name, 'time_in', '');
+                frappe.model.set_value(row.doctype, row.name, 'time_out', '');
+                frappe.model.set_value(row.doctype, row.name, 'transfer_department', '');
+                frappe.model.set_value(row.doctype, row.name, 'transfer_start', '');
+                frappe.model.set_value(row.doctype, row.name, 'transfer_end', '');
+            }
+        });
+    }
 });
 // -------------------------------------------------------------------------
 
-// -------------------- Fetch Branch Employees 1 ----------------------------
+// -------------------- Prevent blank form ----------------------------
 frappe.ui.form.on('Daily Workforce', {
-	// refresh: function(frm) {
+    validate: function (frm) {
+        let invalidRows = [];
 
-	// }
+        frm.doc.branch_employee.forEach(function (row, index) {
+            if (row.employee_off !== 1 && (!row.time_in || !row.time_out)) {
+                invalidRows.push(index + 1); // Adding 1 to index to display row number starting from 1 instead of 0
+            }
+        });
+
+        if (invalidRows.length > 0) {
+            let errorMessage = 'Form cannot save with empty rows: ' + invalidRows.join(', ');
+
+            frappe.msgprint({
+                message: errorMessage,
+                indicator: 'red',
+            });
+
+            frappe.validated = false; // Prevent form submission
+        }
+    }
 });
 // -------------------------------------------------------------------------
 
