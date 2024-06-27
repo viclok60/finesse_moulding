@@ -119,14 +119,6 @@ frappe.ui.form.on('Car Usage', {
 });
 // --------------------------------------------------------------
 
-// ---------------- Hide edit button ----------------------------
-frappe.listview_settings['Car Usage'] = {
-    refresh: function(listview) {
-        listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
-    }
-};
-// --------------------------------------------------------------
-
 // ---------------- Hide Sidebar ----------------------------
 frappe.ui.form.on('Car Usage', {
 	refresh: function(me) {
@@ -169,4 +161,12 @@ frappe.ui.form.on('Car Usage', {
         }
     }
 });
+// --------------------------------------------------------------
+
+// ---------------- Hide edit button ----------------------------
+frappe.listview_settings['Car Usage'] = {
+    refresh: function(listview) {
+        listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
+    }
+};
 // --------------------------------------------------------------
