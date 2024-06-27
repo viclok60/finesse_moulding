@@ -10,24 +10,6 @@ def execute(filters=None):
     to_selected_date = filters.get("to_selected_date")
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
-        {"label": "Total Days", "fieldname": "total_work_days", "fieldtype": "Data", "width": 90},
-        {"label": "Off", "fieldname": "total_off", "fieldtype": "Int", "width": 50},
-        {"label": "Total", "fieldname": "total_employee", "fieldtype": "Data", "width": 60},
-        {"label": "TWH", "fieldname": "total_work_hours", "fieldtype": "Float", "precision": 1, "width": 60},
-        {"label": "<span style='color: green;'>Total Staff Normal (PPL)</span>", "fieldname": "total_staff_norm", "fieldtype": "Int", "width": 150},
-        {"label": "<span style='color: green;'>TWH Normal (W.H)</span>", "fieldname": "total_work_hours_norm", "fieldtype": "Float", "precision": 1, "width": 120},
-        {"label": "<span style='color: red;'>Total Staff OT (PPL)</span>", "fieldname": "total_staff_ot", "fieldtype": "Int", "width": 125},
-        {"label": "<span style='color: red;'>TWH OT (W.H)</span>", "fieldname": "total_work_hours_ot", "fieldtype": "Float", "precision": 1, "width": 90},
-        {"label": "<span style='color: green;'>Transfer Normal IN (PPL)</span>", "fieldname": "in_people_norm", "fieldtype": "Int", "width": 180}, 
-        {"label": "<span style='color: green;'>Transfer Normal IN (W.H)</span>", "fieldname": "in_work_hours_norm", "fieldtype": "Float", "precision": 1, "width": 180},
-        {"label": "<span style='color: green;'>Transfer Normal OUT (PPL)</span>", "fieldname": "out_people_norm", "fieldtype": "Int", "width": 200},
-        {"label": "<span style='color: green;'>Transfer Normal OUT (W.H)</span>", "fieldname": "out_work_hours_norm", "fieldtype": "Float", "precision": 1, "width": 200},
-        {"label": "<span style='color: red;'>Transfer OT IN (PPL)</span>", "fieldname": "in_people_ot", "fieldtype": "Int", "width": 160},
-        {"label": "<span style='color: red;'>Transfer OT IN (W.H)</span>", "fieldname": "in_work_hours_ot", "fieldtype": "Float", "precision": 1, "width": 160},
-        {"label": "<span style='color: red;'>Transfer OT OUT (PPL)</span>", "fieldname": "out_people_ot", "fieldtype": "Int", "width": 180}, 
-        {"label": "<span style='color: red;'>Transfer OT OUT (W.H)</span>", "fieldname": "out_work_hours_ot", "fieldtype": "Float", "precision": 1, "width": 180},
-        {"label": "<span style='color: green;'>Actual Normal (PPL)</span>", "fieldname": "norm_people", "fieldtype": "Int", "width": 150}, 
-        {"label": "<span style='color: green;'>Actual Normal (W.H)</span>", "fieldname": "norm_work_hours", "fieldtype": "Float", "precision": 1, "width": 150},
         {"label": "<span style='color: red;'>Actual OT (PPL)</span>", "fieldname": "ot_people", "fieldtype": "Int", "width": 130}, 
         {"label": "<span style='color: red;'>Actual OT (W.H)</span>", "fieldname": "ot_work_hours", "fieldtype": "Float", "precision": 1, "width": 130},
     ]
@@ -37,8 +19,7 @@ def execute(filters=None):
 
     if not hide_time_columns:
         # Add "Time In" and "Time Out" columns
-        columns.insert(1, {"label": "Time In", "fieldname": "time_in", "fieldtype": "Data", "width": 140})
-        columns.insert(2, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
+        columns.insert(1, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
 
     data = get_data(from_selected_date, to_selected_date, selected_branch)
     return columns, data
@@ -197,6 +178,44 @@ def get_data(from_date, to_date, selected_branch):
                 ORDER BY `time_in`, `time_out`
             """, (branch, from_date, to_date))
 
+			# Get Time Out for the branch on the selected date from tabBranch Employee
+            time_out_weekday1 = frappe.db.sql("""
+                SELECT `be`.`time_out`
+				FROM `tabBranch Employee` AS `be`
+				INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
+				WHERE `be`.`parent` IN (
+					SELECT `name`
+					FROM `tabDaily Workforce`
+					WHERE `branch` = %s AND `date` BETWEEN %s AND %s 
+					AND DAYOFWEEK(`date`) BETWEEN 2 AND 6 -- Monday (2) to Friday (6)
+				) AND `be`.`time_out` IS NOT NULL AND `be`.`time_out` != '' AND `be`.`time_out` > '18:00' AND `be`.`time_out` != `be`.`transfer_end` AND `be`.`time_out` != `be1`.`transfer_end2`
+				UNION ALL
+				SELECT `time_out`
+				FROM `tabBranch Employee` 
+				WHERE `parent` IN (
+					SELECT `name`
+					FROM `tabDaily Workforce`
+					WHERE `date` BETWEEN %s AND %s 
+					AND DAYOFWEEK(`date`) BETWEEN 2 AND 6 -- Monday (2) to Friday (6)
+				) AND `time_out` IS NOT NULL AND `time_out` != '' AND `transfer_end` > '18:00' AND `transfer_department` = %s
+				ORDER BY `time_out`
+            """, (branch, from_date, to_date, from_date, to_date, branch))
+
+            time_out_weekday2 = frappe.db.sql("""
+				SELECT `transfer_end2`
+				FROM `tabBranch Employee 1`
+				WHERE `parent` IN (
+					SELECT `name`
+					FROM `tabDaily Workforce`
+					WHERE `date` BETWEEN %s AND %s 
+					AND DAYOFWEEK(`date`) BETWEEN 2 AND 6 -- Monday (2) to Friday (6)
+				) AND `transfer_end2` > '18:00' AND `transfer_department2` = %s
+				ORDER BY `transfer_end2`
+            """, (from_date, to_date, branch))
+
+            # Combine the results into a single list
+            time_out_weekday = [row[0] for row in time_out_weekday1] + [row[0] for row in time_out_weekday2]
+
             # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
             time_in_out_weekend = frappe.db.sql("""
                 SELECT `time_in`, `time_out`
@@ -209,6 +228,28 @@ def get_data(from_date, to_date, selected_branch):
                 ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
                 ORDER BY `time_in`, `time_out`
             """, (branch, from_date, to_date))
+            
+			# Get Time In and Time Out for the branch on the selected date from tabBranch Employee
+            time_out_weekend = frappe.db.sql("""
+               SELECT `time_out`
+				FROM `tabBranch Employee`
+				WHERE `parent` IN (
+					SELECT `name`
+					FROM `tabDaily Workforce`
+					WHERE `branch` = %s AND `date` BETWEEN %s AND %s 
+					AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+				) AND `time_out` IS NOT NULL AND `time_out` != '' AND `transfer_department` = ''
+				UNION ALL
+				SELECT `time_out`
+				FROM `tabBranch Employee`
+				WHERE `parent` IN (
+					SELECT `name`
+					FROM `tabDaily Workforce`
+					WHERE `date` BETWEEN %s AND %s 
+					AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+				) AND `time_out` IS NOT NULL AND `time_out` != '' AND `transfer_department` = %s
+				ORDER BY `time_out`
+            """, (branch, from_date, to_date, from_date, to_date, branch))
 
             # Fetch the count of tabDaily Workforce entries for the specified branch where time_in is not null
             tw_days_count = frappe.db.sql("""
@@ -240,7 +281,7 @@ def get_data(from_date, to_date, selected_branch):
                 tw_days_count_gl_ven = 0
 
             # Calculate the total number of employees transferred into their department with transfer_start < 18:00
-            in_people_norm1 = frappe.db.sql("""
+            in_people_norm = frappe.db.sql("""
                 SELECT COUNT(`name`)
                 FROM `tabBranch Employee`
                 WHERE `transfer_department` = %s AND `transfer_start` < '18:00'
@@ -251,20 +292,6 @@ def get_data(from_date, to_date, selected_branch):
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                 )
             """, (branch, from_date, to_date))[0][0]
-
-            in_people_norm2 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee 1`
-                WHERE `transfer_department2` = %s AND `transfer_start2` < '18:00'
-                AND `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                )
-            """, (branch, from_date, to_date))[0][0]
-
-            in_people_norm = in_people_norm1 + in_people_norm2
 
             # Calculate the total number of employees transferred into their department with transfer_end > 18:00 during weekdays
             in_people_ot_weekday1 = frappe.db.sql("""
@@ -357,45 +384,35 @@ def get_data(from_date, to_date, selected_branch):
 
             # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_start < 18:00
             branch_employees_out = frappe.db.sql("""
-                SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
-                FROM `tabBranch Employee` AS `be`
-                INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`                                
-                WHERE `be`.`parent` IN (
+                SELECT `transfer_start`, `transfer_end`
+                FROM `tabBranch Employee`
+                WHERE `parent` IN (
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `be`.`transfer_department` != '' AND `be`.`transfer_start` < '18:00'
+                ) AND `transfer_department` != '' AND `transfer_start` < '18:00'
             """, (branch, from_date, to_date), as_dict=True)       
 
             out_work_hours_norm = 0.0
             for employee in branch_employees_out:
                 transfer_start = employee.get("transfer_start")
                 transfer_end = employee.get("transfer_end")
-                transfer_end2 = employee.get("transfer_end2")
 
                 datetime_start = frappe.utils.get_datetime(transfer_start)
                 datetime_end = frappe.utils.get_datetime(transfer_end)
-                datetime_end2 = frappe.utils.get_datetime(transfer_end2)
 
-                if datetime_end.hour >= 18:
+                if datetime_start and datetime_end:
                     end_of_day = datetime_end.replace(hour=18, minute=0, second=0)
-                    datetime_end = end_of_day
+                    if datetime_end.hour > 18:
+                        datetime_end = end_of_day
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
-                    if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
+                    if datetime_start.hour < 12 and datetime_end.hour > 18: # Exclude 1.5-hour break if start time before 12:00 and end time is after 18:00
+                        work_hours -= 1.5
+                    elif datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
-                    out_work_hours_norm += work_hours
-                elif datetime_end.hour < 18 and datetime_end2 is not None:
-                    end_of_day = datetime_end2.replace(hour=18, minute=0, second=0)
-                    datetime_end2 = end_of_day
-                    work_hours = (datetime_end2 - datetime_start).total_seconds() / 3600.0
-                    if datetime_start.hour < 12 and datetime_end2.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
-                        work_hours -= 1.0
-                    out_work_hours_norm += work_hours
-                elif datetime_end.hour < 18:   
-                    work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
-                    if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
-                        work_hours -= 1.0
+                    elif datetime_start.hour >= 13 and datetime_start.hour < 18 and datetime_end.hour > 18: # Exclude 0.5-hour break if start time before 18:00 and end time is after 18:00
+                        work_hours -= 0.5
                     out_work_hours_norm += work_hours
 
             # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_end > 18:00 and during weekdays
@@ -465,51 +482,38 @@ def get_data(from_date, to_date, selected_branch):
 
             # Get Transfer Start and Transfer End for the branch that got employees transferred in 
             branch_employees_in = frappe.db.sql("""
-                SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be`.`transfer_department`, `be1`.`transfer_start2`, `be1`.`transfer_end2`, `be1`.`transfer_department2`
-                FROM `tabBranch Employee` AS `be`
-                INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
-                WHERE (`be1`.`transfer_department2` = %s OR `be`.`transfer_department` = %s) AND `be`.`transfer_start` < '18:00'
-                AND `be`.`parent` IN (
+                SELECT `transfer_start`, `transfer_end`
+                FROM `tabBranch Employee` 
+                WHERE `transfer_department` = %s AND `transfer_start` < '18:00'
+                AND `parent` IN (
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE `date` BETWEEN %s AND %s
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                 )
-            """, (branch, branch, from_date, to_date), as_dict=True)  
+            """, (branch, from_date, to_date), as_dict=True)  
 
             in_work_hours_norm = 0.0
             for employee in branch_employees_in:
                 transfer_start = employee.get("transfer_start")
-                transfer_start2 = employee.get("transfer_start2")
                 transfer_end = employee.get("transfer_end")
-                transfer_end2 = employee.get("transfer_end2")
-                transfer_department = employee.get("transfer_department")
-                transfer_department2 = employee.get("transfer_department2")
 
                 datetime_start = frappe.utils.get_datetime(transfer_start)
-                datetime_start2 = frappe.utils.get_datetime(transfer_start2)
                 datetime_end = frappe.utils.get_datetime(transfer_end)
-                datetime_end2 = frappe.utils.get_datetime(transfer_end2)
 
-                if datetime_end.hour >= 18 and transfer_department == branch:
+                if datetime_start and datetime_end:
                     end_of_day = datetime_end.replace(hour=18, minute=0, second=0)
-                    datetime_end = end_of_day
+                    if datetime_end.hour > 18:
+                        datetime_end = end_of_day
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
-                    if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
+                    if datetime_start.hour < 12 and datetime_end.hour > 18: # Exclude 1.5-hour break if start time before 12:00 and end time is after 18:00
+                        work_hours -= 1.5
+                    elif datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
+                    elif datetime_start.hour >= 13 and datetime_start.hour < 18 and datetime_end.hour > 18: # Exclude 0.5-hour break if start time before 18:00 and end time is after 18:00
+                        work_hours -= 0.5
                     in_work_hours_norm += work_hours
-                elif datetime_end.hour < 18 and transfer_department == branch:
-                    work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
-                    if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
-                        work_hours -= 1.0
-                    in_work_hours_norm += work_hours    
-                elif datetime_end.hour < 18 and transfer_department2 == branch and datetime_end2 is not None:
-                    end_of_day = datetime_end2.replace(hour=18, minute=0, second=0)
-                    datetime_end2 = end_of_day
-                    work_hours = (datetime_end2 - datetime_start2).total_seconds() / 3600.0
-                    in_work_hours_norm += work_hours
-                                       
-                                       
+
             # Get Transfer Start and Transfer End for the branch that got employees transferred in for OT
             branch_employees_in_ot_weekday = frappe.db.sql("""
                 SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`, `be1`.`transfer_department2`
@@ -753,18 +757,16 @@ def get_data(from_date, to_date, selected_branch):
             time_in_weekend_count = {}
             time_out_weekend_count = {}
 
-            for record in time_in_out_weekday:
-                time_in = record[0]
-                time_out = record[1]
-    
-                time_in_weekday_count[time_in] = time_in_weekday_count.get(time_in, 0) + 1
+            for record in time_out_weekday:
+                
+                time_out = record
+                
                 time_out_weekday_count[time_out] = time_out_weekday_count.get(time_out, 0) + 1
 
-            for record in time_in_out_weekend:
-                time_in = record[0]
-                time_out = record[1]
+            for record in time_out_weekend:
+                
+                time_out = record[0]
     
-                time_in_weekend_count[time_in] = time_in_weekend_count.get(time_in, 0) + 1
                 time_out_weekend_count[time_out] = time_out_weekend_count.get(time_out, 0) + 1
 
         else:
@@ -797,28 +799,10 @@ def get_data(from_date, to_date, selected_branch):
 
         data.append({
             "branch": branch,
-            "time_in": ", ".join([f"{time} - {count}" for time, count in sorted(time_in_weekday_count.items())] + [f"{time} - {count}" for time, count in sorted(time_in_weekend_count.items())]),
             "time_out": ", ".join([f"{time} - {count}" for time, count in sorted(time_out_weekday_count.items())] + [f"{time} - {count}" for time, count in sorted(time_out_weekend_count.items())]),
-            "total_work_days": tw_days_count,
-            "total_off": total_employee_off,
-            "total_employee": total_employee,
-            "total_work_hours": total_work_hours,  # Add the calculated total work hours to the data
-            "total_staff_norm": total_staff_norm,
-            "total_work_hours_norm": total_work_hours_norm,  # Add the calculated normalized work hours to the data
-            "total_staff_ot": total_staff_ot,  # Add the calculated count of employees with time_out after 18:00
-            "total_work_hours_ot": total_work_hours_ot,  # Add the calculated TWH (OT) to the data
-            "in_people_norm": in_people_norm,  # Add the calculated total number of employees transferred into their department
-            "in_work_hours_norm": in_work_hours_norm,
-            "out_people_norm": out_people_norm,
-            "out_work_hours_norm": out_work_hours_norm,
-            "in_people_ot": in_people_ot,
-            "in_work_hours_ot": in_work_hours_ot,
-            "out_people_ot": out_people_ot,
-            "out_work_hours_ot": out_work_hours_ot,
-            "norm_people": norm_people,
-            "norm_work_hours": norm_work_hours,
             "ot_people": ot_people,
             "ot_work_hours": ot_work_hours,
         })
 
     return data
+
