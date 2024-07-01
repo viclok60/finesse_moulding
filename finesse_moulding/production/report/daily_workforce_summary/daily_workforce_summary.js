@@ -29,8 +29,8 @@ frappe.query_reports["Daily Workforce Summary"] = {
             }
         },
         {
-            "fieldname": "custom_weekend_dates",
-            "label": __("Custom Weekend Dates"),
+            "fieldname": "public_holiday_dates",
+            "label": __("Public Holidays: YYYY-MM-DD"),
             "fieldtype": "MultiSelect",
             "options": [],
             "description": "Select specific dates to be treated as weekends."
@@ -53,9 +53,9 @@ frappe.query_reports["Daily Workforce Summary"] = {
                     ]
                 },
                 {
-                    fieldname: 'custom_weekend_dates',
+                    fieldname: 'public_holiday_dates',
                     operator: 'in',
-                    value: filters.custom_weekend_dates
+                    value: filters.public_holiday_dates
                 }
             ]
         };
