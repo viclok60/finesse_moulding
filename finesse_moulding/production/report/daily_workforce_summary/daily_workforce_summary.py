@@ -91,7 +91,6 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                     WHERE `branch` = %s 
                       AND `date` BETWEEN %s AND %s
                       AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                      AND `date` != '2024-06-12'
                 )
             """, (branch, from_date, to_date))[0][0]
 
