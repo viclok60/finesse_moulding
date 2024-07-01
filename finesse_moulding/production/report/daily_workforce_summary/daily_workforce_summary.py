@@ -53,6 +53,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
+    public_holidays = datetime.strptime(public_holidays, "%Y-%m-%d")
 
      # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
