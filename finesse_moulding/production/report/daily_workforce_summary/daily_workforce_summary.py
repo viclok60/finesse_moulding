@@ -8,6 +8,8 @@ def execute(filters=None):
     selected_branch = filters.get("branch")
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
+    public_holiday_dates = filters.get("public_holiday_dates")
+    
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
         {"label": "Total Days", "fieldname": "total_work_days", "fieldtype": "Data", "width": 90},
@@ -51,6 +53,20 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
+
+    # Parse public holiday dates into a list of datetime objects
+    public_holidays = []
+    if public_holiday_dates:
+        try:
+            public_holiday_dates = public_holiday_dates.split(",")
+            for date_str in public_holiday_dates:
+                date_obj = datetime.strptime(date_str.strip(), "%Y-%m-%d").date()
+                public_holidays.append(date_obj)
+        except ValueError:
+            frappe.throw("Invalid date format for public holidays. Please use YYYY-MM-DD, separated by commas.")
+
+    def is_public_holiday(date, public_holidays):
+            return date in public_holidays
 
      # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
@@ -614,13 +630,12 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
             total_work_hours_ot = 0.0
             total_work_hours_weekdays = 0.0
             total_work_hours_weekends = 0.0
-          
 
             # Iterate over dates from from_date to to_date
             current_date = from_date
             while current_date <= to_date:
                 # Check if the current date is a weekend
-                if not is_weekend(current_date):
+                if not is_weekend(current_date) and not is_public_holiday(current_date, public_holidays):
                     # Calculate total staff norm when not weekend
                     total_staff_norm = total_employee_weekday - total_off
 
