@@ -31,8 +31,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
         {
             "fieldname": "public_holiday_dates",
             "label": __("Public Holidays: YYYY-MM-DD"),
-            "fieldtype": "MultiSelect",
-            "options": [],
+            "fieldtype": "Date",
             "description": "Select specific dates to be treated as weekends."
         }
     ],
