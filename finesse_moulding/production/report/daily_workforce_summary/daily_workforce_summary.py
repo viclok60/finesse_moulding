@@ -630,7 +630,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
             current_date = from_date
             while current_date <= to_date:
                 # Check if the current date is a weekend
-                if not is_weekend(current_date) and is_public_holiday(current_date, public_holidays):
+                if not is_weekend(current_date) and not is_public_holiday(current_date, public_holidays):
                     # Calculate total staff norm when not weekend
                     total_staff_norm = total_employee_weekday - total_off
 
