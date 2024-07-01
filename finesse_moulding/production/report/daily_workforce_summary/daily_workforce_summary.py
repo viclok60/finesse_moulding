@@ -9,12 +9,6 @@ def execute(filters=None):
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
     public_holidays = filters.get("public_holidays")
-
-     # Parse public holidays
-    if public_holidays:
-        public_holidays = [datetime.strptime(date.strip(), "%Y-%m-%d") for date in public_holidays.split(",")]
-    else:
-        public_holidays = []
         
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
@@ -628,7 +622,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
             current_date = from_date
             while current_date <= to_date:
                 # Check if the current date is a weekend
-                if not is_weekend(current_date):
+                if not is_weekend(current_date) and current_date.strftime("%Y-%m-%d") not in public_holidays:
                     # Calculate total staff norm when not weekend
                     total_staff_norm = total_employee_weekday - total_off
 
