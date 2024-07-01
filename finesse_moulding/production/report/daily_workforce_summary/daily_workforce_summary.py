@@ -52,9 +52,7 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
-
-    # Convert the public_holiday_dates string to a list of dates
-    # public_holiday_dates_list = [date.strip() for date in public_holiday_dates.split(',')]
+    public_holiday_dates = datetime.strptime(public_holiday_dates, "%Y-%m-%d")
 
      # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
@@ -87,10 +85,9 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                    AND DATE(`date`) NOT IN ({})  -- Exclude public holiday dates
+                    AND DATE(`date`) NOT IN %s  -- Exclude public holiday dates
                 )
-            """.format(','.join(['%s'] * len(public_holiday_dates.split(',')))), 
-            (branch, from_date, to_date) + tuple(public_holiday_dates.split(',')))[0][0]
+            """, (branch, from_date, to_date, public_holiday_dates))[0][0]
             
             total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
