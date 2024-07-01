@@ -84,7 +84,7 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                    AND DATE(`date`) NOT IN %s  -- Exclude public holiday dates
+                    AND `date` NOT IN %s  -- Exclude public holiday dates
                 )
             """, (branch, from_date, to_date, public_holiday_dates))[0][0]
             
