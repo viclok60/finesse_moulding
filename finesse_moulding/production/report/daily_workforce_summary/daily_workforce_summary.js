@@ -31,11 +31,11 @@ frappe.query_reports["Daily Workforce Summary"] = {
         {
             "fieldname": "public_holidays",
             "label": __("Public Holidays"),
-            "fieldtype": "MultiSelect",
-            "description": __("Enter multiple dates separated by commas (YYYY-MM-DD)"),
+            "fieldtype": "Data",
+            "description": __("Enter dates separated by commas (e.g., 2024-06-13,2024-12-25)"),
         }
     ],
-    // Add a custom method to get the selected filters
+    // Add a custom method to get the selected 'branch' value and date range
     get_query: function (filters) {
         return {
             filters: [
@@ -51,11 +51,6 @@ frappe.query_reports["Daily Workforce Summary"] = {
                         filters.from_selected_date,
                         filters.to_selected_date
                     ]
-                },
-                {
-                    fieldname: 'public_holidays',
-                    operator: 'in',
-                    value: filters.public_holidays ? filters.public_holidays.split(",") : []
                 }
             ]
         };
