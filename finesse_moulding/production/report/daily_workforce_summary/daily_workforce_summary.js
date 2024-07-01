@@ -30,9 +30,13 @@ frappe.query_reports["Daily Workforce Summary"] = {
         },
         {
             "fieldname": "public_holiday_dates",
-            "label": __("Public Holidays: YYYY-MM-DD"),
-            "fieldtype": "Date",
-            "description": "Select specific dates to be treated as weekends."
+            "label": __("Public Holidays"),
+            "fieldtype": "Data",
+            "description": __("Specify dates as YYYY-MM-DD, separated by commas (,). Example: 2024-06-12, 2024-06-24"),
+            "on_change": function() {
+                // Trigger the report refresh when the 'public_holiday_dates' filter changes
+                frappe.query_report.refresh();
+            }
         }
     ],
     get_query: function (filters) {
@@ -54,7 +58,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
                 {
                     fieldname: 'public_holiday_dates',
                     operator: 'in',
-                    value: filters.public_holiday_dates
+                    value: filters.public_holiday_dates ? filters.public_holiday_dates.split(",") : []
                 }
             ]
         };
