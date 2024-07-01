@@ -8,8 +8,6 @@ def execute(filters=None):
     selected_branch = filters.get("branch")
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
-    public_holiday_dates = filters.get("public_holiday_dates")
-    
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
         {"label": "Total Days", "fieldname": "total_work_days", "fieldtype": "Data", "width": 90},
@@ -42,17 +40,14 @@ def execute(filters=None):
         columns.insert(1, {"label": "Time In", "fieldname": "time_in", "fieldtype": "Data", "width": 140})
         columns.insert(2, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
 
-    data = get_data(from_selected_date, to_selected_date, selected_branch, public_holiday_dates)
+    data = get_data(from_selected_date, to_selected_date, selected_branch)
     return columns, data
-
-# Parse the public holiday dates string into a list of datetime.date objects
-public_holidays = [datetime.strptime(date_str, "%Y-%m-%d").date() for date_str in public_holiday_dates.split(",")]
 
 def is_weekend(date_obj):
     # Check if the day of the week is Saturday (5) or Sunday (6)
-    return date_obj.weekday() in [5, 6] or date_obj in public_holidays
+    return date_obj.weekday() in [5, 6]
 
-def get_data(from_date, to_date, selected_branch, public_holiday_dates):
+def get_data(from_date, to_date, selected_branch):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
@@ -90,7 +85,7 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                 )
             """, (branch, from_date, to_date))[0][0]
-                    
+            
             total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
                 FROM `tabBranch Employee`
@@ -619,6 +614,7 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
             total_work_hours_ot = 0.0
             total_work_hours_weekdays = 0.0
             total_work_hours_weekends = 0.0
+          
 
             # Iterate over dates from from_date to to_date
             current_date = from_date
@@ -826,4 +822,5 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
         })
 
     return data
+
 
