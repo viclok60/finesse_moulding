@@ -53,7 +53,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
                 },
                 {
                     fieldname: 'public_holiday_dates',
-                    operator: 'equals',
+                    operator: 'in',
                     value: filters.public_holiday_dates
                 }
             ]
