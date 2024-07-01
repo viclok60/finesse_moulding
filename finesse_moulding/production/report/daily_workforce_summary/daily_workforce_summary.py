@@ -81,7 +81,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
             continue
     
         if workforce_exists:
-
+            public_holidays_str = ",".join([f"'{date.strftime('%Y-%m-%d')}'" for date in public_holidays])
             total_employee_weekday = frappe.db.sql("""
                 SELECT COUNT(`employee_name`)
                 FROM `tabBranch Employee`
