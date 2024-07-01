@@ -28,8 +28,14 @@ frappe.query_reports["Daily Workforce Summary"] = {
                 frappe.query_report.refresh();
             }
         },
+        {
+            "fieldname": "custom_weekend_dates",
+            "label": __("Custom Weekend Dates"),
+            "fieldtype": "MultiSelect",
+            "options": [],
+            "description": "Select specific dates to be treated as weekends."
+        }
     ],
-    // Add a custom method to get the selected 'branch' value and date range
     get_query: function (filters) {
         return {
             filters: [
@@ -45,8 +51,14 @@ frappe.query_reports["Daily Workforce Summary"] = {
                         filters.from_selected_date,
                         filters.to_selected_date
                     ]
+                },
+                {
+                    fieldname: 'custom_weekend_dates',
+                    operator: 'in',
+                    value: filters.custom_weekend_dates
                 }
             ]
         };
     }
 };
+
