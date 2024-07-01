@@ -8,7 +8,6 @@ def execute(filters=None):
     selected_branch = filters.get("branch")
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
-    public_holiday_dates = filters.get("public_holiday_dates")
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
         {"label": "Total Days", "fieldname": "total_work_days", "fieldtype": "Data", "width": 90},
@@ -84,9 +83,8 @@ def get_data(from_date, to_date, selected_branch, public_holiday_dates):
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                    AND `date` NOT IN %s  -- Exclude public holiday dates
                 )
-            """, (selected_branch, from_date, to_date, public_holiday_dates))
+            """, (branch, from_date, to_date))[0][0]
                     
             total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
