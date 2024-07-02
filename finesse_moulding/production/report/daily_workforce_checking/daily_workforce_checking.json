@@ -1,0 +1,29 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2024-07-02 12:13:39.874344",
+ "disable_prepared_report": 1,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2024-07-02 12:13:39.874344",
+ "modified_by": "Administrator",
+ "module": "Production",
+ "name": "Daily Workforce Checking",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Daily Workforce",
+ "report_name": "Daily Workforce Checking",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Receptionist"
+  }
+ ]
+}
