@@ -208,8 +208,23 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
             # Handle the case where total_weekend_off is None
             total_weekend_off = total_weekend_off or 0
 
-
-            total_staff_ot_weekdays = frappe.db.sql("""
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                total_staff_ot_weekdays = frappe.db.sql("""
+                SELECT COUNT(`name`)
+                FROM `tabBranch Employee`
+                WHERE `time_out` > '18:00'
+                AND `parent` IN (
+                    SELECT `name`
+                    FROM `tabDaily Workforce`
+                    WHERE branch = %s AND `date` BETWEEN %s AND %s
+                    AND `date` != %s
+                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                total_staff_ot_weekdays = frappe.db.sql("""
                 SELECT COUNT(`name`)
                 FROM `tabBranch Employee`
                 WHERE `time_out` > '18:00'
@@ -220,7 +235,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                 )
             """, (branch, from_date, to_date))[0][0]
-
+                
             # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
             time_in_out_weekday = frappe.db.sql("""
                 SELECT `time_in`, `time_out`
