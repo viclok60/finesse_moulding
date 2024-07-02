@@ -30,7 +30,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
         },
         {
             "fieldname": "public_holidays",
-            "label": __("Public Holidays"),
+            "label": __("Public Holidays, YYYY-MM-DD format"),
             "fieldtype": "Data",
             "description": __("Enter a comma-separated list of dates in YYYY-MM-DD format."),
         }
