@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Supervisor OT Hours"] = {
+frappe.query_reports["OT Hours by Staff"] = {
     "filters": [
         {
             "fieldname": "from_selected_date",
