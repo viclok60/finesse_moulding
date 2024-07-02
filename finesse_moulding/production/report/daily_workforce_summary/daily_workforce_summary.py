@@ -298,18 +298,35 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                 """, (branch, from_date, to_date))
                 
 
-            # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
-            time_in_out_weekend = frappe.db.sql("""
-                SELECT `time_in`, `time_out`
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
-                ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
-                ORDER BY `time_in`, `time_out`
-            """, (branch, from_date, to_date))
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                time_in_out_weekend = frappe.db.sql("""
+                    SELECT `time_in`, `time_out`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` = %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
+                    ORDER BY `time_in`, `time_out`
+                """, (branch, from_date, to_date, public_holidays_list))
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
+                time_in_out_weekend = frappe.db.sql("""
+                    SELECT `time_in`, `time_out`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
+                    ORDER BY `time_in`, `time_out`
+                """, (branch, from_date, to_date))
+                   
 
             # Fetch the count of tabDaily Workforce entries for the specified branch where time_in is not null
             tw_days_count = frappe.db.sql("""
@@ -401,107 +418,239 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
 
             in_people_norm = in_people_norm1 + in_people_norm2
 
-            # Calculate the total number of employees transferred into their department with transfer_end > 18:00 during weekdays
-            in_people_ot_weekday1 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee`
-                WHERE `transfer_department` = %s AND `transfer_end` > '18:00'
-                AND `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                )
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                in_people_ot_weekday1 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `transfer_department` = %s AND `transfer_end` > '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred into their department with transfer_end > 18:00 during weekdays
+                in_people_ot_weekday1 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `transfer_department` = %s AND `transfer_end` > '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    )
+                """, (branch, from_date, to_date))[0][0]
+                
 
-            in_people_ot_weekday2 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee 1`
-                WHERE `transfer_department2` = %s AND `transfer_end2` > '18:00'
-                AND `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                )
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                in_people_ot_weekday2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `transfer_department2` = %s AND `transfer_end2` > '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred into their department with transfer_end > 18:00 during weekdays
+                in_people_ot_weekday2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `transfer_department2` = %s AND `transfer_end2` > '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    )
+                """, (branch, from_date, to_date))[0][0]
 
             in_people_ot_weekday = in_people_ot_weekday1 + in_people_ot_weekday2
 
-            # Calculate the total number of employees transferred into their department during weekends
-            in_people_ot_weekend = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee`
-                WHERE `transfer_department` = %s
-                AND `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
-                )
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                in_people_ot_weekend = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `transfer_department` = %s
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND `date` = %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred into their department during weekends
+                in_people_ot_weekend = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `transfer_department` = %s
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    )
+                """, (branch, from_date, to_date))[0][0]
+                
 
-            # Calculate the total number of employees transferred out of their department with transfer_start < 18:00
-            out_people_norm = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `transfer_department` != '' AND `transfer_start` < '18:00'
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                out_people_norm = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department` != '' AND `transfer_start` < '18:00'
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred out of their department with transfer_start < 18:00
+                out_people_norm = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department` != '' AND `transfer_start` < '18:00'
+                """, (branch, from_date, to_date))[0][0]
+                
 
-            # Calculate the total number of employees transferred out of their department with transfer_end > 18:00 and is weekday
-            out_people_ot_weekday1 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `transfer_department` != '' AND `transfer_end` > '18:00' 
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                out_people_ot_weekday1 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department` != '' AND `transfer_end` > '18:00' 
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred out of their department with transfer_end > 18:00 and is weekday
+                out_people_ot_weekday1 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department` != '' AND `transfer_end` > '18:00' 
+                """, (branch, from_date, to_date))[0][0]
+                
 
-            out_people_ot_weekday2 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee 1`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `transfer_department2` != '' AND `transfer_end2` > '18:00' 
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                out_people_ot_weekday2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department2` != '' AND `transfer_end2` > '18:00' 
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred out of their department with transfer_end > 18:00 and is weekday
+                out_people_ot_weekday2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `transfer_department2` != '' AND `transfer_end2` > '18:00' 
+                """, (branch, from_date, to_date))[0][0]
 
             out_people_ot_weekday = out_people_ot_weekday1 + out_people_ot_weekday2
 
-            # Calculate the total number of employees transferred out of their department and is weekend
-            out_people_ot_weekend = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
-                ) AND `transfer_department` != '' 
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                out_people_ot_weekend = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` = %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `transfer_department` != '' 
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred out of their department and is weekend
+                out_people_ot_weekend = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `transfer_department` != '' 
+                """, (branch, from_date, to_date))[0][0]
+                
 
-            # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_start < 18:00
-            branch_employees_out = frappe.db.sql("""
-                SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
-                FROM `tabBranch Employee` AS `be`
-                INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`                                
-                WHERE `be`.`parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `be`.`transfer_department` != '' AND `be`.`transfer_start` < '18:00'
-            """, (branch, from_date, to_date), as_dict=True)       
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                branch_employees_out = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`                                
+                    WHERE `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `be`.`transfer_department` != '' AND `be`.`transfer_start` < '18:00'
+                """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_start < 18:00
+                branch_employees_out = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`                                
+                    WHERE `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `be`.`transfer_department` != '' AND `be`.`transfer_start` < '18:00'
+                """, (branch, from_date, to_date), as_dict=True)  
+                
 
             out_work_hours_norm = 0.0
             for employee in branch_employees_out:
@@ -533,19 +682,37 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         work_hours -= 1.0
                     out_work_hours_norm += work_hours
 
-            # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_end > 18:00 and during weekdays
-            branch_employees_out_ot_weekday = frappe.db.sql("""
-                SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
-                FROM `tabBranch Employee` AS `be`
-                INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
-                WHERE `be`.`parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                ) AND `be`.`transfer_department` != '' AND `be`.`time_out` > '18:00'
-            """, (branch, from_date, to_date), as_dict=True)       
 
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                branch_employees_out_ot_weekday = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
+                    WHERE `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `be`.`transfer_department` != '' AND `be`.`time_out` > '18:00'
+                """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Transfer Start and Transfer End for the branch that transfered employees out with transfer_end > 18:00 and during weekdays
+                branch_employees_out_ot_weekday = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be1`.`transfer_end2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
+                    WHERE `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    ) AND `be`.`transfer_department` != '' AND `be`.`time_out` > '18:00'
+                """, (branch, from_date, to_date), as_dict=True)   
+                
+                  
             out_work_hours_ot_weekday = 0.0
             for employee in branch_employees_out_ot_weekday:
                 transfer_start = employee.get("transfer_start")
@@ -568,17 +735,34 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         work_hours = (datetime_end2 - datetime_start).total_seconds() / 3600.0
                         out_work_hours_ot_weekday += work_hours
 
-            # Get Transfer Start and Transfer End for the branch that transfered employees out during weekends
-            branch_employees_out_ot_weekend = frappe.db.sql("""
-                SELECT `transfer_start`, `transfer_end`
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
-                ) AND `transfer_department` != ''
-            """, (branch, from_date, to_date), as_dict=True)       
+
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                branch_employees_out_ot_weekend = frappe.db.sql("""
+                    SELECT `transfer_start`, `transfer_end`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` = %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `transfer_department` != ''
+                """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Transfer Start and Transfer End for the branch that transfered employees out during weekends
+                branch_employees_out_ot_weekend = frappe.db.sql("""
+                    SELECT `transfer_start`, `transfer_end`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    ) AND `transfer_department` != ''
+                """, (branch, from_date, to_date), as_dict=True) 
+                
 
             out_work_hours_ot_weekend = 0.0
             for employee in branch_employees_out_ot_weekend:
@@ -598,19 +782,38 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         work_hours -= 0.5
                     out_work_hours_ot_weekend += work_hours
 
-            # Get Transfer Start and Transfer End for the branch that got employees transferred in 
-            branch_employees_in = frappe.db.sql("""
-                SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be`.`transfer_department`, `be1`.`transfer_start2`, `be1`.`transfer_end2`, `be1`.`transfer_department2`
-                FROM `tabBranch Employee` AS `be`
-                INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
-                WHERE (`be1`.`transfer_department2` = %s OR `be`.`transfer_department` = %s) AND `be`.`transfer_start` < '18:00'
-                AND `be`.`parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                )
-            """, (branch, branch, from_date, to_date), as_dict=True)  
+
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                branch_employees_in = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be`.`transfer_department`, `be1`.`transfer_start2`, `be1`.`transfer_end2`, `be1`.`transfer_department2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
+                    WHERE (`be1`.`transfer_department2` = %s OR `be`.`transfer_department` = %s) AND `be`.`transfer_start` < '18:00'
+                    AND `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Transfer Start and Transfer End for the branch that got employees transferred in 
+                branch_employees_in = frappe.db.sql("""
+                    SELECT `be`.`transfer_start`, `be`.`transfer_end`, `be`.`transfer_department`, `be1`.`transfer_start2`, `be1`.`transfer_end2`, `be1`.`transfer_department2`
+                    FROM `tabBranch Employee` AS `be`
+                    INNER JOIN `tabBranch Employee 1` AS `be1` ON `be`.`employee_number` = `be1`.`employee_number` AND `be`.`parent` = `be1`.`parent`
+                    WHERE (`be1`.`transfer_department2` = %s OR `be`.`transfer_department` = %s) AND `be`.`transfer_start` < '18:00'
+                    AND `be`.`parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    )
+                """, (branch, branch, from_date, to_date), as_dict=True) 
+                
 
             in_work_hours_norm = 0.0
             for employee in branch_employees_in:
