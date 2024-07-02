@@ -28,9 +28,22 @@ frappe.query_reports["Daily Workforce Summary"] = {
                 frappe.query_report.refresh();
             }
         },
+        {
+            "fieldname": "public_holidays",
+            "label": __("Public Holidays"),
+            "fieldtype": "Data",
+            "description": __("Enter a comma-separated list of dates in YYYY-MM-DD format."),
+        }
     ],
-    // Add a custom method to get the selected 'branch' value and date range
+    // Add a custom method to get the selected 'branch' value, date range, and public holidays
     get_query: function (filters) {
+        var public_holidays_list = [];
+        if (filters.public_holidays) {
+            public_holidays_list = filters.public_holidays.split(",").map(function(dateStr) {
+                return dateStr.trim();
+            });
+        }
+        
         return {
             filters: [
                 {
@@ -45,11 +58,17 @@ frappe.query_reports["Daily Workforce Summary"] = {
                         filters.from_selected_date,
                         filters.to_selected_date
                     ]
+                },
+                {
+                    fieldname: 'public_holiday',
+                    operator: 'in',
+                    value: public_holidays_list
                 }
             ]
         };
     }
 };
+
 
 
 
