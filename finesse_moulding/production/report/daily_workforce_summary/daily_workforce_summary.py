@@ -107,8 +107,23 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                     )
                 """, (branch, from_date, to_date))[0][0]
-            
-            total_off = frappe.db.sql("""
+
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                total_off = frappe.db.sql("""
+                SELECT SUM(`employee_off`)
+                FROM `tabBranch Employee`
+                WHERE `parent` IN (
+                    SELECT `name`
+                    FROM `tabDaily Workforce`
+                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                    AND `date` NOT IN %s  -- Exclude public holidays
+                    AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
                 FROM `tabBranch Employee`
                 WHERE `parent` IN (
