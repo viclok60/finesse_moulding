@@ -1,5 +1,5 @@
 {
- "add_total_row": 1,
+ "add_total_row": 0,
  "columns": [],
  "creation": "2024-07-02 12:13:39.874344",
  "disable_prepared_report": 1,
@@ -9,7 +9,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2024-07-02 12:13:39.874344",
+ "modified": "2024-07-02 12:18:54.534792",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "Daily Workforce Checking",

@@ -11,5 +11,3 @@ frappe.query_reports["Daily Workforce Checking"] = {
             "reqd": 1,
             "default": frappe.datetime.get_today()
         },
-    ]
-};
