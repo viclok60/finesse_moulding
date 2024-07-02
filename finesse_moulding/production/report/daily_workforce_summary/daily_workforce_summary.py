@@ -165,7 +165,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -215,7 +215,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -250,7 +250,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE branch = %s AND `date` BETWEEN %s AND %s
-                    AND `date` != %s
+                    AND `date` NOT IN %s
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -277,7 +277,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                     ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
                     ORDER BY `time_in`, `time_out`
@@ -307,7 +307,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
                     ORDER BY `time_in`, `time_out`
@@ -367,7 +367,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -396,7 +396,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -428,7 +428,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -458,7 +458,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -489,7 +489,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -518,7 +518,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     ) AND `transfer_department` != '' AND `transfer_start` < '18:00'
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -546,7 +546,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     ) AND `transfer_department` != '' AND `transfer_end` > '18:00' 
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -574,7 +574,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     ) AND `transfer_department2` != '' AND `transfer_end2` > '18:00' 
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -603,7 +603,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     ) AND `transfer_department` != '' 
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
@@ -632,7 +632,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     ) AND `be`.`transfer_department` != '' AND `be`.`transfer_start` < '18:00'
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
@@ -693,7 +693,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     ) AND `be`.`transfer_department` != '' AND `be`.`time_out` > '18:00'
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
@@ -745,7 +745,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     ) AND `transfer_department` != ''
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
@@ -794,7 +794,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` != %s
+                        AND `date` NOT IN %s
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     )
                 """, (branch, branch, from_date, to_date, public_holidays_list), as_dict=True)
@@ -859,7 +859,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                             SELECT `name`
                             FROM `tabDaily Workforce`
                             WHERE `date` BETWEEN %s AND %s
-                            AND `date` != %s
+                            AND `date` NOT IN %s
                             AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                         )
                 """, (branch, branch, from_date, to_date, public_holidays_list), as_dict=True) 
@@ -913,7 +913,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` = %s
+                        AND `date` IN %s
                         AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
                     )
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True) 
