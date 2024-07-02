@@ -53,15 +53,14 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
-    public_holidays = datetime.strptime(public_holidays, "%Y-%m-%d")
+    public_holidays = [datetime.strptime(date, "%Y-%m-%d") for date in public_holidays]
 
-     # Get a list of all branches
+    # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
-
     branches = sorted(branches, key=lambda x: x.get("branch"))
     
     data = []
-            
+
     for branch in branches:
         branch = branch.get("branch")
         
@@ -77,18 +76,20 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
             continue
     
         if workforce_exists:
+            public_holiday_strs = [date.strftime("%Y-%m-%d") for date in public_holidays]
+            placeholders = ', '.join(['%s'] * len(public_holidays))
 
-            total_employee_weekday = frappe.db.sql("""
+            total_employee_weekday = frappe.db.sql(f"""
                 SELECT COUNT(`employee_name`)
                 FROM `tabBranch Employee`
                 WHERE `parent` IN (
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND `date` != %s  -- Exclude specific date
+                    AND `date` NOT IN ({placeholders})  -- Exclude public holidays
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                 )
-            """, (branch, from_date, to_date, public_holidays))[0][0]
+            """, (branch, from_date, to_date, *public_holiday_strs))[0][0]
 
             
             total_off = frappe.db.sql("""
