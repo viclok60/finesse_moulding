@@ -206,17 +206,33 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                 )
             """, (branch, from_date, to_date, branch, from_date, to_date))[0][0]
 
-            # Total Off on Weekends
-            total_weekend_off = frappe.db.sql("""
-                SELECT SUM(`employee_off`)
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
-                )
-            """, (branch, from_date, to_date))[0][0]
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                total_weekend_off = frappe.db.sql("""
+                    SELECT SUM(`employee_off`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` = %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Total Off on Weekends
+                total_weekend_off = frappe.db.sql("""
+                    SELECT SUM(`employee_off`)
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                    )
+                """, (branch, from_date, to_date))[0][0]
+                       
 
             # Handle the case where total_off is None
             total_off = total_off or 0
