@@ -41,7 +41,7 @@ def get_data(selected_date):
 
         total_attend = total_employee - total_absent
 
-        total_out = frappe.db.sql("""
+        total_out1 = frappe.db.sql("""
             SELECT COUNT(`name`)
             FROM `tabBranch Employee`
             WHERE `parent` IN (
@@ -50,6 +50,18 @@ def get_data(selected_date):
                 WHERE `branch` = %s AND `date` = %s
             ) AND `transfer_department` != ''
         """, (branch, selected_date))[0][0]
+
+        total_out2 = frappe.db.sql("""
+            SELECT COUNT(`name`)
+            FROM `tabBranch Employee 1`
+            WHERE `parent` IN (
+                SELECT `name`
+                FROM `tabDaily Workforce`
+                WHERE `branch` = %s AND `date` = %s
+            ) AND `transfer_department2` != ''
+        """, (branch, selected_date))[0][0]
+
+        total_out = total_out1 + total_out2
 
         # Updated query for total_in to count occurrences of the branch in transfer_department
         total_in1 = frappe.db.sql("""
