@@ -30,7 +30,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
         {
             "fieldname": "public_holidays",
             "label": __("Public Holidays"),
-            "fieldtype": "Date",
+            "fieldtype": "Data",
             "description": __("Enter public holidays in YYYY-MM-DD format"),
         }
     ],
@@ -52,7 +52,7 @@ frappe.query_reports["Daily Workforce Summary"] = {
                 },
                 {
                     fieldname: 'public_holidays',
-                    operator: 'like',
+                    operator: '=',
                     value: filters.public_holidays
                 }
             ]
