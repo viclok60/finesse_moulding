@@ -2,12 +2,13 @@
 # For license information, please see license.txt
 
 import frappe
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def execute(filters=None):
     selected_branch = filters.get("branch")
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
+    public_holidays = filters.get("public_holidays")  # Get the public holidays list from filters
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
         {"label": "Total Days", "fieldname": "total_work_days", "fieldtype": "Data", "width": 90},
@@ -40,19 +41,26 @@ def execute(filters=None):
         columns.insert(1, {"label": "Time In", "fieldname": "time_in", "fieldtype": "Data", "width": 140})
         columns.insert(2, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
 
-    data = get_data(from_selected_date, to_selected_date, selected_branch)
+    data = get_data(from_selected_date, to_selected_date, selected_branch, public_holidays)
     return columns, data
 
 def is_weekend(date_obj):
     # Check if the day of the week is Saturday (5) or Sunday (6)
     return date_obj.weekday() in [5, 6]
 
-def get_data(from_date, to_date, selected_branch):
+def get_data(from_date, to_date, selected_branch, public_holidays):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
 
-     # Get a list of all branches
+    # Parse public holidays list
+    if public_holidays:
+        public_holidays_list = public_holidays.split(",")
+        public_holidays_list = [datetime.strptime(date_str.strip(), "%Y-%m-%d").date() for date_str in public_holidays_list]
+    else:
+        public_holidays_list = []
+
+    # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
 
     branches = sorted(branches, key=lambda x: x.get("branch"))
@@ -74,7 +82,7 @@ def get_data(from_date, to_date, selected_branch):
             continue
     
         if workforce_exists:
-
+            # Modify query to exclude public holidays
             total_employee_weekday = frappe.db.sql("""
                 SELECT COUNT(`employee_name`)
                 FROM `tabBranch Employee`
@@ -82,10 +90,10 @@ def get_data(from_date, to_date, selected_branch):
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND `date` != '2024-06-12'
+                    AND `date` NOT IN %s  -- Exclude public holidays
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                 )
-            """, (branch, from_date, to_date))[0][0]
+            """, (branch, from_date, to_date, public_holidays_list))[0][0]
             
             total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
