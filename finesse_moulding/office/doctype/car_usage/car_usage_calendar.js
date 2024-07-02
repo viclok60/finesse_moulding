@@ -7,8 +7,6 @@ frappe.views.calendar["Car Usage"] = {
 		end: "time_in",
 		id: "name",
 		title: "car_model",
-#		allDay: "allDay",
 	},
-	gantt: true,
 	get_events_method: "frappe.desk.calendar.get_events",
 };
