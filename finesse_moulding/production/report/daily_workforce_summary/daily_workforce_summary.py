@@ -336,18 +336,36 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                     )
                 """, (branch, from_date, to_date))[0][0]
+
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                in_people_norm2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `transfer_department2` = %s AND `transfer_start2` < '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    )
+                """, (branch, from_date, to_date, public_holidays_list))[0][0]
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Calculate the total number of employees transferred into their department with transfer_start < 18:00
+                in_people_norm2 = frappe.db.sql("""
+                    SELECT COUNT(`name`)
+                    FROM `tabBranch Employee 1`
+                    WHERE `transfer_department2` = %s AND `transfer_start2` < '18:00'
+                    AND `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
+                    )
+                """, (branch, from_date, to_date))[0][0]
                 
-            in_people_norm2 = frappe.db.sql("""
-                SELECT COUNT(`name`)
-                FROM `tabBranch Employee 1`
-                WHERE `transfer_department2` = %s AND `transfer_start2` < '18:00'
-                AND `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
-                )
-            """, (branch, from_date, to_date))[0][0]
 
             in_people_norm = in_people_norm1 + in_people_norm2
 
