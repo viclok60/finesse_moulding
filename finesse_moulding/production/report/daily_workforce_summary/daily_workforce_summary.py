@@ -8,7 +8,7 @@ def execute(filters=None):
     selected_branch = filters.get("branch")
     from_selected_date = filters.get("from_selected_date")
     to_selected_date = filters.get("to_selected_date")
-    public_holidays_str = filters.get("public_holidays")  # Get public holidays filter as string
+    public_holidays = filters.get("public_holidays")  # Get public holidays filter as string
     
     columns = [
         {"label": "Branch", "fieldname": "branch", "fieldtype": "Data", "width": 90},
@@ -42,22 +42,17 @@ def execute(filters=None):
         columns.insert(1, {"label": "Time In", "fieldname": "time_in", "fieldtype": "Data", "width": 140})
         columns.insert(2, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
 
-    data = get_data(from_selected_date, to_selected_date, selected_branch, public_holidays_str)
+    data = get_data(from_selected_date, to_selected_date, selected_branch, public_holidays)
     return columns, data
 
 def is_weekend(date_obj):
     # Check if the day of the week is Saturday (5) or Sunday (6)
     return date_obj.weekday() in [5, 6]
 
-def get_data(from_date, to_date, selected_branch, public_holidays_str):
+def get_data(from_date, to_date, selected_branch, public_holidays):
     # Convert date strings to datetime objects
     from_date = datetime.strptime(from_date, "%Y-%m-%d")
     to_date = datetime.strptime(to_date, "%Y-%m-%d")
-    
-    if public_holidays_str:
-        public_holidays = [datetime.strptime(date.strip(), "%Y-%m-%d") for date in public_holidays_str.split(",")]
-    else:
-        public_holidays = []
 
     # Get a list of all branches
     branches = frappe.get_all("Branch", fields=["branch"])
@@ -80,8 +75,6 @@ def get_data(from_date, to_date, selected_branch, public_holidays_str):
             continue
     
         if workforce_exists:
-            public_holiday_strs = [date.strftime("%Y-%m-%d") for date in public_holidays]
-            placeholders = ', '.join(['%s'] * len(public_holidays))
 
             total_employee_weekday = frappe.db.sql(f"""
                 SELECT COUNT(`employee_name`)
@@ -90,10 +83,9 @@ def get_data(from_date, to_date, selected_branch, public_holidays_str):
                     SELECT `name`
                     FROM `tabDaily Workforce`
                     WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND `date` NOT IN ({placeholders})  -- Exclude public holidays
                     AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
                 )
-            """, (branch, from_date, to_date, *public_holiday_strs))[0][0]
+            """, (branch, from_date, to_date))[0][0]
 
             total_off = frappe.db.sql("""
                 SELECT SUM(`employee_off`)
