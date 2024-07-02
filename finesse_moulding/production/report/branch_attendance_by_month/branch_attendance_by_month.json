@@ -1,0 +1,45 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2024-07-02 14:15:26.096016",
+ "disable_prepared_report": 1,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2024-07-02 14:16:32.118159",
+ "modified_by": "Administrator",
+ "module": "Production",
+ "name": "Branch Attendance by Month",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT \r\n    YEAR(`tabDaily Workforce`.`date`) AS `Year`,\r\n    MONTH(`tabDaily Workforce`.`date`) AS `Month`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'CUT' THEN 1 ELSE 0 END) AS `CUT`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'EMB' THEN 1 ELSE 0 END) AS `EMB`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'FINAL' THEN 1 ELSE 0 END) AS `FINAL`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'FJ' THEN 1 ELSE 0 END) AS `FJ`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'FL' THEN 1 ELSE 0 END) AS `FL`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'FOIL' THEN 1 ELSE 0 END) AS `FOIL`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'GESSO' THEN 1 ELSE 0 END) AS `GESSO`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'MD' THEN 1 ELSE 0 END) AS `MD`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'MTN' THEN 1 ELSE 0 END) AS `MTN`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'OIL' THEN 1 ELSE 0 END) AS `OIL`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'PACK' THEN 1 ELSE 0 END) AS `PACK`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'PALLET' THEN 1 ELSE 0 END) AS `PALLET`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'QA_PROD' THEN 1 ELSE 0 END) AS `QA_PROD`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'RIP' THEN 1 ELSE 0 END) AS `RIP`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'SD11' THEN 1 ELSE 0 END) AS `SD11`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'SD12' THEN 1 ELSE 0 END) AS `SD12`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'SM' THEN 1 ELSE 0 END) AS `SM`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'SP11' THEN 1 ELSE 0 END) AS `SP11`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'SP12' THEN 1 ELSE 0 END) AS `SP12`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'TFL' THEN 1 ELSE 0 END) AS `TFL`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'T_MAKING' THEN 1 ELSE 0 END) AS `T_MAKING`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'WHS12' THEN 1 ELSE 0 END) AS `WHS12`,\r\n    SUM(CASE WHEN `tabDaily Workforce`.`branch` = 'WHS41' THEN 1 ELSE 0 END) AS `WHS41`\r\nFROM \r\n    `tabBranch Employee`\r\nINNER JOIN \r\n    `tabDaily Workforce` ON `tabBranch Employee`.`parent` = `tabDaily Workforce`.`name`\r\nWHERE \r\n    `tabDaily Workforce`.`date` BETWEEN %(from_date)s AND %(to_date)s\r\n    AND `tabBranch Employee`.`time_in` IS NOT NULL \r\n    AND `tabBranch Employee`.`time_in` != ''\r\nGROUP BY \r\n    YEAR(`tabDaily Workforce`.`date`), MONTH(`tabDaily Workforce`.`date`)\r\n",
+ "ref_doctype": "Daily Workforce",
+ "report_name": "Branch Attendance by Month",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Production Manager"
+  }
+ ]
+}
