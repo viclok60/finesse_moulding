@@ -235,19 +235,36 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                     AND DAYOFWEEK(`date`) NOT IN (1, 7)  -- Exclude Sundays (1) and Saturdays (7)
                 )
             """, (branch, from_date, to_date))[0][0]
+
+            if public_holidays_list:
+                # Modify query to exclude public holidays if list is not empty
+                time_in_out_weekday = frappe.db.sql("""
+                    SELECT `time_in`, `time_out`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND `date` != %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
+                    ORDER BY `time_in`, `time_out`
+                """, (branch, from_date, to_date, public_holidays_list))
+            else:
+                # If public_holidays_list is empty (None or []), exclude no dates
+                # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
+                time_in_out_weekday = frappe.db.sql("""
+                    SELECT `time_in`, `time_out`
+                    FROM `tabBranch Employee`
+                    WHERE `parent` IN (
+                        SELECT `name`
+                        FROM `tabDaily Workforce`
+                        WHERE `branch` = %s AND `date` BETWEEN %s AND %s
+                        AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
+                    ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
+                    ORDER BY `time_in`, `time_out`
+                """, (branch, from_date, to_date))
                 
-            # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
-            time_in_out_weekday = frappe.db.sql("""
-                SELECT `time_in`, `time_out`
-                FROM `tabBranch Employee`
-                WHERE `parent` IN (
-                    SELECT `name`
-                    FROM `tabDaily Workforce`
-                    WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                    AND DAYOFWEEK(`date`) BETWEEN 2 AND 6  -- Monday (2) to Friday (6)
-                ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
-                ORDER BY `time_in`, `time_out`
-            """, (branch, from_date, to_date))
 
             # Get Time In and Time Out for the branch on the selected date from tabBranch Employee
             time_in_out_weekend = frappe.db.sql("""
