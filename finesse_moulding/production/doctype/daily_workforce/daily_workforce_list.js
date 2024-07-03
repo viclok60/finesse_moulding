@@ -9,7 +9,10 @@ frappe.listview_settings['Daily Workforce'] = {
         
         // Remove bulk edit
         listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
+
+        // Hide sidebar
+        $('span.sidebar-toggle-btn').hide();
+        $('.col-lg-2.layout-side-section').hide();
     }
 };
-
 // -------------------------------------------------------------------------
