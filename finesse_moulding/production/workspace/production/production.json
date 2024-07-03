@@ -1,0 +1,163 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"qrJ_Pr708Q\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Production</span>\",\"col\":12}},{\"id\":\"-0FauZG1Fp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Workforce\",\"col\":3}},{\"id\":\"CH9c-YmvA9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Checkin\",\"col\":3}},{\"id\":\"eyYan63ZoB\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"oNYvNraL84\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"59NhcVNYUn\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"NRb3xhLIvS\",\"type\":\"card\",\"data\":{\"card_name\":\"Production Reports\",\"col\":4}},{\"id\":\"o5OupdaCU8\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Reports\",\"col\":4}}]",
+ "creation": "2024-07-03 08:20:00.032695",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "organization",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Production",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily Workforce Summary",
+   "link_count": 0,
+   "link_to": "Daily Workforce Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily Workforce Morning Attendance",
+   "link_count": 0,
+   "link_to": "Daily Workforce Morning Attendance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily Workforce Checking",
+   "link_count": 0,
+   "link_to": "Daily Workforce Checking",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Production Reports",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily OT by Branch",
+   "link_count": 0,
+   "link_to": "Daily OT Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Branch Attendance by Date",
+   "link_count": 0,
+   "link_to": "Branch Attendance by Date",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Branch Attendance by Month",
+   "link_count": 0,
+   "link_to": "Branch Attendance by Month",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Supervisor OT by Date",
+   "link_count": 0,
+   "link_to": "Supervisor OT by Date",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "OT Hours by Staff",
+   "link_count": 0,
+   "link_to": "OT Hours by Staff",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "HR Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Employee Checkin by Date",
+   "link_count": 0,
+   "link_to": "Employee Checkin by Date",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2024-07-03 09:16:01.169781",
+ "modified_by": "Administrator",
+ "module": "Production",
+ "name": "Production",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Daily Workforce",
+   "link_to": "Daily Workforce",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Employee Checkin",
+   "link_to": "Employee Checkin",
+   "stats_filter": "",
+   "type": "DocType"
+  }
+ ],
+ "title": "Production"
+}
