@@ -9,4 +9,10 @@ frappe.listview_settings['Daily Workforce'] = {
 };
 // -------------------------------------------------------------------------
 
-
+// -------------------- Remove bulk edit ----------------------------
+frappe.listview_settings['Daily Workforce'] = {
+    refresh: function(listview) {
+        listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
+    }
+};
+// -------------------------------------------------------------------------
