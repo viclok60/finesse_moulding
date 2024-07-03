@@ -3,16 +3,13 @@
 
 // -------------------- Remove likes ----------------------------
 frappe.listview_settings['Daily Workforce'] = {
-	refresh: function(listview) {
-	   	$("use.like-icon").hide();
-	}
-};
-// -------------------------------------------------------------------------
-
-// -------------------- Remove bulk edit ----------------------------
-frappe.listview_settings['Daily Workforce'] = {
     refresh: function(listview) {
+        // Remove likes
+        $("use.like-icon").hide();
+        
+        // Remove bulk edit
         listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
     }
 };
+
 // -------------------------------------------------------------------------
