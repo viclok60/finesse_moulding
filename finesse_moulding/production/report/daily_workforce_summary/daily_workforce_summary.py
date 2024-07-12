@@ -662,21 +662,21 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                 datetime_end = frappe.utils.get_datetime(transfer_end)
                 datetime_end2 = frappe.utils.get_datetime(transfer_end2)
 
-                if datetime_end.hour >= 18:
+                if datetime_end.hour > 18:
                     end_of_day = datetime_end.replace(hour=18, minute=0, second=0)
                     datetime_end = end_of_day
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
                     if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
                     out_work_hours_norm += work_hours
-                elif datetime_end.hour < 18 and datetime_end2 is not None:
+                elif datetime_end.hour < 18 and datetime_end2 is not None and datetime_end2.hour <= 18:
                     end_of_day = datetime_end2.replace(hour=18, minute=0, second=0)
                     datetime_end2 = end_of_day
                     work_hours = (datetime_end2 - datetime_start).total_seconds() / 3600.0
                     if datetime_start.hour < 12 and datetime_end2.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
                     out_work_hours_norm += work_hours
-                elif datetime_end.hour < 18:   
+                elif datetime_end.hour <= 18:   
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
                     if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
@@ -829,19 +829,19 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                 datetime_end = frappe.utils.get_datetime(transfer_end)
                 datetime_end2 = frappe.utils.get_datetime(transfer_end2)
 
-                if datetime_end.hour >= 18 and transfer_department == branch:
+                if datetime_end and datetime_end.hour > 18 and transfer_department == branch:
                     end_of_day = datetime_end.replace(hour=18, minute=0, second=0)
                     datetime_end = end_of_day
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
                     if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
                     in_work_hours_norm += work_hours
-                elif datetime_end.hour < 18 and transfer_department == branch:
+                elif datetime_end and datetime_end.hour <= 18 and transfer_department == branch:
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
                     if datetime_start.hour < 12 and datetime_end.hour > 12: # Exclude 1-hour break if start time before 12:30 and end time is before 18:00
                         work_hours -= 1.0
-                    in_work_hours_norm += work_hours    
-                elif datetime_end.hour < 18 and transfer_department2 == branch and datetime_end2 is not None:
+                    in_work_hours_norm += work_hours   
+                elif datetime_end and datetime_end.hour < 18 and transfer_department2 == branch and datetime_end2 is not None:
                     end_of_day = datetime_end2.replace(hour=18, minute=0, second=0)
                     datetime_end2 = end_of_day
                     work_hours = (datetime_end2 - datetime_start2).total_seconds() / 3600.0
@@ -1195,3 +1195,4 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
         })
 
     return data
+
