@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Office",
  "links": [],
- "modified": "2024-07-03 09:26:46.568089",
+ "modified": "2024-08-26 14:22:03.385833",
  "modified_by": "Administrator",
  "module": "Office",
  "name": "Office",
@@ -29,7 +29,7 @@
    "doc_view": "List",
    "label": "Car Usage",
    "type": "URL",
-   "url": "http://192.168.0.233/app/car-usage/view/calendar/default"
+   "url": "http://192.168.0.223/app/car-usage/view/calendar/default"
   }
  ],
  "title": "Office"

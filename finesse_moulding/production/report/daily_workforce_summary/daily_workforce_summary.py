@@ -1,6 +1,3 @@
-# Copyright (c) 2024, Victor and contributors
-# For license information, please see license.txt
-
 import frappe
 from datetime import datetime, timedelta
 
@@ -165,8 +162,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
             else:
@@ -215,8 +214,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
             else:
@@ -307,8 +308,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )                                               
                     ) AND `time_in` IS NOT NULL AND `time_out` IS NOT NULL AND `time_in` != '' AND `time_out` != ''
                     ORDER BY `time_in`, `time_out`
                 """, (branch, from_date, to_date, public_holidays_list))
@@ -489,8 +492,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     )
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
             else:
@@ -603,8 +608,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     ) AND `transfer_department` != '' 
                 """, (branch, from_date, to_date, public_holidays_list))[0][0]
             else:
@@ -745,8 +752,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `branch` = %s AND `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     ) AND `transfer_department` != ''
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True)
             else:
@@ -913,8 +922,10 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                         SELECT `name`
                         FROM `tabDaily Workforce`
                         WHERE `date` BETWEEN %s AND %s
-                        AND `date` IN %s
-                        AND (DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7)  -- Sunday (1) or Saturday (7)
+                        AND (
+                            DAYOFWEEK(`date`) = 1 OR DAYOFWEEK(`date`) = 7  -- Sunday (1) or Saturday (7)
+                            OR `date` IN %s 
+                        )   
                     )
                 """, (branch, from_date, to_date, public_holidays_list), as_dict=True) 
             else:
@@ -1195,4 +1206,3 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
         })
 
     return data
-
