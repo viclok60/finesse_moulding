@@ -1,0 +1,145 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "allow_events_in_timeline": 1,
+ "allow_rename": 1,
+ "creation": "2024-08-28 11:44:12.246235",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "job",
+  "species",
+  "size",
+  "column_break_n6qgl",
+  "volume",
+  "mc_id",
+  "trolley",
+  "column_break_tloa2",
+  "job_details_section",
+  "start_time",
+  "paused_time",
+  "stop_time",
+  "column_break_pqtod",
+  "job_duration",
+  "output",
+  "reject"
+ ],
+ "fields": [
+  {
+   "fieldname": "job",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Job"
+  },
+  {
+   "fieldname": "species",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Species"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Size"
+  },
+  {
+   "fieldname": "column_break_n6qgl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "volume",
+   "fieldtype": "Data",
+   "label": "L x W x H"
+  },
+  {
+   "fieldname": "mc_id",
+   "fieldtype": "Data",
+   "label": "MC ID"
+  },
+  {
+   "fieldname": "trolley",
+   "fieldtype": "Data",
+   "label": "Trolley"
+  },
+  {
+   "fieldname": "column_break_tloa2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_details_section",
+   "fieldtype": "Section Break",
+   "label": "Job Details"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "paused_time",
+   "fieldtype": "Datetime",
+   "label": "Paused Time"
+  },
+  {
+   "fieldname": "stop_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Stop Time"
+  },
+  {
+   "fieldname": "column_break_pqtod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_duration",
+   "fieldtype": "Float",
+   "label": "Job Duration",
+   "precision": "4"
+  },
+  {
+   "fieldname": "output",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Output Feet"
+  },
+  {
+   "fieldname": "reject",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Reject Feet"
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-28 11:44:12.246235",
+ "modified_by": "Administrator",
+ "module": "Production",
+ "name": "FJ Job List",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "job",
+ "track_changes": 1
+}

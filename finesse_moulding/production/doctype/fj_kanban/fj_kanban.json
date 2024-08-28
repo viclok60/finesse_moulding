@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-08-28 11:00:36.171039",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "barcode",
+  "size",
+  "species",
+  "volume",
+  "mc_id",
+  "date",
+  "trolley",
+  "status",
+  "naming_series"
+ ],
+ "fields": [
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Data",
+   "label": "ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Size"
+  },
+  {
+   "fieldname": "species",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Species"
+  },
+  {
+   "fieldname": "volume",
+   "fieldtype": "Data",
+   "label": "L x W x H"
+  },
+  {
+   "fieldname": "mc_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "MC ID"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "trolley",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Trolley"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nOngoing\nPaused\nFinished"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "YY.MM.DD.###"
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-28 11:01:31.961104",
+ "modified_by": "Administrator",
+ "module": "Production",
+ "name": "FJ Kanban",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
