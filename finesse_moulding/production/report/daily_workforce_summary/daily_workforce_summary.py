@@ -905,7 +905,7 @@ def get_data(from_date, to_date, selected_branch, public_holidays):
                     datetime_start = end_of_day
                     work_hours = (datetime_end2 - datetime_start).total_seconds() / 3600.0
                     in_work_hours_ot_weekday += work_hours
-                elif datetime_end.hour > 18:
+                elif datetime_end and datetime_end.hour > 18:
                     end_of_day = datetime_end.replace(hour=18, minute=30, second=0)
                     datetime_start = end_of_day
                     work_hours = (datetime_end - datetime_start).total_seconds() / 3600.0
