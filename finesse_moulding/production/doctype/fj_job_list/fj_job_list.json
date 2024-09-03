@@ -3,6 +3,7 @@
  "allow_copy": 1,
  "allow_events_in_timeline": 1,
  "allow_rename": 1,
+ "autoname": "field:job",
  "creation": "2024-08-28 11:44:12.246235",
  "default_view": "List",
  "doctype": "DocType",
@@ -10,6 +11,7 @@
  "engine": "InnoDB",
  "field_order": [
   "job",
+  "machine",
   "species",
   "size",
   "column_break_n6qgl",
@@ -30,9 +32,9 @@
   {
    "fieldname": "job",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Job"
+   "label": "Job",
+   "unique": 1
   },
   {
    "fieldname": "species",
@@ -113,15 +115,22 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Reject Feet"
+  },
+  {
+   "fieldname": "machine",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Machine"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-28 11:44:12.246235",
+ "modified": "2024-09-03 12:16:30.750017",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "FJ Job List",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -140,6 +149,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "job",
  "track_changes": 1
 }
