@@ -26,7 +26,8 @@
   "column_break_pqtod",
   "job_duration",
   "output",
-  "reject"
+  "reject",
+  "tonnage"
  ],
  "fields": [
   {
@@ -121,12 +122,19 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Machine"
+  },
+  {
+   "fieldname": "tonnage",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tonnage",
+   "precision": "3"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 12:16:30.750017",
+ "modified": "2024-09-10 10:55:58.710482",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "FJ Job List",
