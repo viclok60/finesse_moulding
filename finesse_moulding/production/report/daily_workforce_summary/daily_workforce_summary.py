@@ -39,7 +39,34 @@ def execute(filters=None):
         columns.insert(2, {"label": "Time Out", "fieldname": "time_out", "fieldtype": "Data", "width": 150})
 
     data = get_data(from_selected_date, to_selected_date, selected_branch, public_holidays)
-    return columns, data
+
+    # Initialize the variable to accumulate ot_work_hours
+    total_ot_hours = 0.0
+    total_work_hours = 0.0
+    ot_percentage = 0.0
+    
+    # Branches to exclude
+    excluded_branches = ['GUARD', 'LD', 'MTN', 'QA_PROD', 'SM']
+
+    # Loop through the data and sum the ot_work_hours, excluding the specified branches
+    for entry in data:
+        branch = entry.get("branch")  # Get the branch from the entry
+        if branch not in excluded_branches:  # Only sum if the branch is not in the excluded list
+            total_ot_hours += entry.get("ot_work_hours", 0.0)  # Default to 0.0 if ot_work_hours is not present
+            total_work_hours += entry.get("total_work_hours", 0.0)
+
+    # Calculate the OT percentage and format it to 2 decimal places
+    ot_percentage = (total_ot_hours / total_work_hours) * 100 if total_work_hours > 0 else 0.0
+    ot_percentage_formatted = f"{ot_percentage:.2f}%"  # Format as percentage
+
+    # Report summary with formatted OT percentage
+    report_summary = [
+        {"label": "Total OT Hours", "value": total_ot_hours, 'indicator': 'Red'},
+        {"label": "Total Work Hours", "value": total_work_hours, 'indicator': 'Green'},
+        {"label": "OT Percentage", "value": ot_percentage_formatted, 'indicator': 'Red'}
+    ]
+
+    return columns, data, None, None, report_summary
 
 def is_weekend(date_obj):
     # Check if the day of the week is Saturday (5) or Sunday (6)
