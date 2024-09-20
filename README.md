@@ -1,4 +1,4 @@
-# Unattended Install Script for ERPNext
+# Unattended Install Script for ERPNext in Ubuntu 
 Unattended script for ERPNext installation (Supports Versions 13, 14 and 15).
 
 This is a no-interactive script for installing ERPNext Versions 13, 14 and 15. You can set up either development or production with very minimal interaction.
@@ -61,7 +61,7 @@ This will fix the spawn error and all services will restart successfully.
 
 -----------------------------------------------------------------
 
-# Integrated Resource Planning System IRPS
+# Installation Steps for ERPNext in Docker
 <a href="https://github.com/chiajunshen/shrdc_custom_frappe_docker/blob/master/LICENSE">
     <img alt="GitHub" src="https://img.shields.io/github/license/chiajunshen/shrdc_custom_frappe_docker.svg?color=blue">
 </a>
