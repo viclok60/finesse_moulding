@@ -59,6 +59,8 @@ sudo supervisorctl reload
 ```
 This will fix the spawn error and all services will restart successfully.
 
+-----------------------------------------------------------------
+
 # Integrated Resource Planning System IRPS
 <a href="https://github.com/chiajunshen/shrdc_custom_frappe_docker/blob/master/LICENSE">
     <img alt="GitHub" src="https://img.shields.io/github/license/chiajunshen/shrdc_custom_frappe_docker.svg?color=blue">
