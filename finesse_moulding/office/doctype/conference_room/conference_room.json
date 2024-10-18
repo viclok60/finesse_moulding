@@ -1,0 +1,192 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-18 15:47:16.367007",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee_number",
+  "employee_name",
+  "time_in",
+  "time_out",
+  "column_break_gaqiu",
+  "room",
+  "purpose",
+  "department_section",
+  "all_department",
+  "pm",
+  "fin",
+  "mkt",
+  "column_break_ueuuz",
+  "pe",
+  "hr",
+  "it",
+  "sc",
+  "column_break_bn9de",
+  "esh",
+  "qa",
+  "dir",
+  "om"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee_number",
+   "fieldtype": "Link",
+   "label": "Emp. ID",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee_number.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name"
+  },
+  {
+   "fieldname": "time_in",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Time In",
+   "reqd": 1
+  },
+  {
+   "fieldname": "time_out",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Time Out",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gaqiu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "room",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Room",
+   "options": "\nRoom 313\nRoom 218\nReception Room",
+   "reqd": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Small Text",
+   "label": "Purpose",
+   "reqd": 1
+  },
+  {
+   "fieldname": "department_section",
+   "fieldtype": "Section Break",
+   "label": "Departments Involved"
+  },
+  {
+   "default": "0",
+   "fieldname": "all_department",
+   "fieldtype": "Check",
+   "label": "All"
+  },
+  {
+   "default": "0",
+   "fieldname": "pm",
+   "fieldtype": "Check",
+   "label": "PM"
+  },
+  {
+   "default": "0",
+   "fieldname": "fin",
+   "fieldtype": "Check",
+   "label": "FIN"
+  },
+  {
+   "default": "0",
+   "fieldname": "mkt",
+   "fieldtype": "Check",
+   "label": "MKT"
+  },
+  {
+   "fieldname": "column_break_ueuuz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pe",
+   "fieldtype": "Check",
+   "label": "PE"
+  },
+  {
+   "default": "0",
+   "fieldname": "hr",
+   "fieldtype": "Check",
+   "label": "HR"
+  },
+  {
+   "default": "0",
+   "fieldname": "it",
+   "fieldtype": "Check",
+   "label": "IT"
+  },
+  {
+   "default": "0",
+   "fieldname": "sc",
+   "fieldtype": "Check",
+   "label": "SC"
+  },
+  {
+   "fieldname": "column_break_bn9de",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "esh",
+   "fieldtype": "Check",
+   "label": "ESH"
+  },
+  {
+   "default": "0",
+   "fieldname": "qa",
+   "fieldtype": "Check",
+   "label": "QA"
+  },
+  {
+   "default": "0",
+   "fieldname": "dir",
+   "fieldtype": "Check",
+   "label": "DIR"
+  },
+  {
+   "default": "0",
+   "fieldname": "om",
+   "fieldtype": "Check",
+   "label": "OM / SV"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-18 17:10:56.758481",
+ "modified_by": "Administrator",
+ "module": "Office",
+ "name": "Conference Room",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "employee_name",
+ "track_changes": 1
+}
