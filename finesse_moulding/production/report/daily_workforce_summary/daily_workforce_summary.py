@@ -46,7 +46,7 @@ def execute(filters=None):
     ot_percentage = 0.0
     
     # Branches to exclude
-    excluded_branches = ['GUARD', 'LD', 'MTN', 'QA_PROD', 'SM']
+    excluded_branches = ['GUARD', 'PALLET']
 
     # Loop through the data and sum the ot_work_hours, excluding the specified branches
     for entry in data:

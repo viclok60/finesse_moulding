@@ -1,0 +1,145 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-21 09:24:47.159770",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_c8jfe",
+  "hostel",
+  "daily_checking_list_section",
+  "toilet",
+  "dustbin",
+  "kitchen",
+  "dining_area",
+  "sweeping",
+  "column_break_tuoai",
+  "cleanliness_total_score",
+  "checking_time",
+  "signature_section",
+  "checked_by",
+  "column_break_myvy4",
+  "verified_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_c8jfe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hostel",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Hostel",
+   "options": "\nNO. 13A RAWANG PERDANA\nNO. 13B RAWANG PERDANA\nNO. 15A RAWANG PERDANA\nNO. 15B RAWANG PERDANA\nNO. 27A RAWANG PERDANA\nNO. 27B RAWANG PERDANA\nNO. 29A RAWANG PERDANA\nNO. 29B RAWANG PERDANA\nNO. 31A RAWANG PERDANA\nNO. 7 RAWANG PUTRA\nNO. 14 RAWANG PUTRA\nNO. 14A RAWANG PUTRA",
+   "reqd": 1
+  },
+  {
+   "fieldname": "daily_checking_list_section",
+   "fieldtype": "Section Break",
+   "label": "Daily Checking List"
+  },
+  {
+   "fieldname": "toilet",
+   "fieldtype": "Int",
+   "label": "Toilet",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dustbin",
+   "fieldtype": "Int",
+   "label": "Dustbin",
+   "reqd": 1
+  },
+  {
+   "fieldname": "kitchen",
+   "fieldtype": "Int",
+   "label": "Kitchen",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dining_area",
+   "fieldtype": "Int",
+   "label": "Dining Area",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sweeping",
+   "fieldtype": "Int",
+   "label": "Sweeping (Room, Living Hall, Stairs)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_tuoai",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cleanliness_total_score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Cleanliness Total Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "checking_time",
+   "fieldtype": "Time",
+   "label": "Checking time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "signature_section",
+   "fieldtype": "Section Break",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "checked_by",
+   "fieldtype": "Signature",
+   "label": "Checked by",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_myvy4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Signature",
+   "label": "Verified by"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-21 09:25:36.503001",
+ "modified_by": "Administrator",
+ "module": "Office",
+ "name": "Hostel Cleaning Checklist",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
