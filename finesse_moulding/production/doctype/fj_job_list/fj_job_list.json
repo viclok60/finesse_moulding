@@ -19,6 +19,7 @@
   "mc_id",
   "trolley",
   "column_break_tloa2",
+  "bundle_no",
   "job_details_section",
   "start_time",
   "paused_time",
@@ -129,12 +130,17 @@
    "in_list_view": 1,
    "label": "Tonnage",
    "precision": "3"
+  },
+  {
+   "fieldname": "bundle_no",
+   "fieldtype": "Small Text",
+   "label": "Bundle No."
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-10 10:55:58.710482",
+ "modified": "2024-11-06 16:52:56.927688",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "FJ Job List",

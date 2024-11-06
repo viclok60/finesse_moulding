@@ -9,6 +9,9 @@ frappe.listview_settings['Car Usage'] = {
 	// Hide Sidebar
 	$('span.sidebar-toggle-btn').hide();
         $('.col-lg-2.layout-side-section').hide();
+        
+        // Remove likes
+        $("use.like-icon").hide();
 
     }
 };

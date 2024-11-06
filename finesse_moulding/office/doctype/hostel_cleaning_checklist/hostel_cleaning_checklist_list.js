@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 // ---------------- Hide Edit Button ----------------------------
-frappe.listview_settings['Conference Room'] = {
+frappe.listview_settings['Hostel Cleaning Checklist'] = {
     refresh: function(listview) {
         listview.page.actions.find('[data-label="Edit"],[data-label="Assign To"]').parent().parent().remove();
 	

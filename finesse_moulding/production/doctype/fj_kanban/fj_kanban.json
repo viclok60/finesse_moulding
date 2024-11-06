@@ -15,7 +15,9 @@
   "mc_id",
   "date",
   "trolley",
+  "column_break_icbnh",
   "status",
+  "bundle_no",
   "naming_series"
  ],
  "fields": [
@@ -69,14 +71,24 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "options": "YY.MM.DD.###"
+  },
+  {
+   "fieldname": "column_break_icbnh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bundle_no",
+   "fieldtype": "Small Text",
+   "label": "Bundle No."
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-28 11:01:31.961104",
+ "modified": "2024-11-06 16:50:15.075069",
  "modified_by": "Administrator",
  "module": "Production",
  "name": "FJ Kanban",
